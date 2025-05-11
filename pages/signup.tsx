@@ -11,7 +11,7 @@ const Signup: React.FC = () => {
       <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-[#fff8f0] via-[#ffe3c1] to-[#ffe8cc] font-sans">
         <div className="w-[90%] max-w-xl p-10 rounded-[18px] shadow-[0_12px_30px_rgba(255,111,0,0.25)] bg-gradient-to-br from-white to-[#fff5e6] animate-fadeIn">
           <h1 className="text-center text-[#ff6f00] mb-9 text-[34px] font-bold tracking-wide shadow-sm animate-slideInDown">
-            Welcome to Indian Railways
+            Welcome to Railways
           </h1>
 
           <form className="flex flex-col gap-5">
