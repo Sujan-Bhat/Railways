@@ -2,6 +2,34 @@ import React from "react";
 import Head from "next/head";
 
 const Signup: React.FC = () => {
+  const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
+    event.preventDefault();
+    const form = event.currentTarget;
+    const formData = {
+      phone: (form.elements.namedItem("phone") as HTMLInputElement).value,
+      email: (form.elements.namedItem("email") as HTMLInputElement).value,
+      password: (form.elements.namedItem("password") as HTMLInputElement).value,
+      fullname: (form.elements.namedItem("fullname") as HTMLInputElement).value,
+      dob: (form.elements.namedItem("dob") as HTMLInputElement).value,
+      gender: (form.elements.namedItem("gender") as HTMLSelectElement).value,
+      address: (form.elements.namedItem("address") as HTMLTextAreaElement).value,
+      aadhaar: (form.elements.namedItem("aadhaar") as HTMLInputElement).value,
+    };
+
+    try {
+      const response = await fetch("/api/signup", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(formData),
+      });
+      const data = await response.json();
+      console.log("Signup response:", data);
+      // Handle success (e.g., redirect, show message, etc.)
+    } catch (error) {
+      console.error("Error creating account:", error);
+    }
+  };
+
   return (
     <>
       <Head>
@@ -14,7 +42,7 @@ const Signup: React.FC = () => {
             Welcome to Railways
           </h1>
 
-          <form className="flex flex-col gap-5">
+          <form className="flex flex-col gap-5" onSubmit={handleSubmit}>
             <div>
               <label htmlFor="phone" className="block text-sm font-semibold text-gray-700">
                 Phone Number
