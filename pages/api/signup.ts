@@ -10,12 +10,21 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
   const { phone, email, password, fullname, dob, gender, address, aadhaar } = req.body;
 
   try {
-    // Make sure the table 'users' exists in your 'railways' database
-    const query = `
+    // Check if a user with the same email already exists
+    const checkQuery = "SELECT * FROM users WHERE email = ?";
+    const [existing]: any = await pool.query(checkQuery, [email]);
+
+    if (existing.length > 0) {
+      // User exists: return conflict status with a message
+      return res.status(409).json({ message: "User already exists" });
+    }
+
+    // User does not exist, so insert the new record
+    const insertQuery = `
       INSERT INTO users (phone, email, password, fullname, dob, gender, address, aadhaar)
       VALUES (?, ?, ?, ?, ?, ?, ?, ?)
     `;
-    const [result]: any = await pool.query(query, [
+    const [result]: any = await pool.query(insertQuery, [
       phone,
       email,
       password,
@@ -32,4 +41,5 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
     return res.status(500).json({ error: "Server error" });
   }
 }
+
 

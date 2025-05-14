@@ -10,7 +10,8 @@ export default function Login() {
         <title>Login Page</title>
       </Head>
       <div className="min-h-screen flex items-center justify-center bg-white">
-        <div className="bg-white shadow-lg rounded px-8 pt-6 pb-8">
+        {/* Added w-96 here to increase the width of the card */}
+        <div className="bg-white shadow-lg rounded px-8 pt-6 pb-8 w-96">
           <h2 className="text-3xl font-bold text-center text-black mb-6">
             Sign In
           </h2>
@@ -66,4 +67,5 @@ export default function Login() {
     </>
   );
 }
+
 

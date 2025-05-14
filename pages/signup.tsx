@@ -1,7 +1,12 @@
-import React from "react";
+import React, { useState } from "react";
 import Head from "next/head";
+import { useRouter } from "next/router";
 
 const Signup: React.FC = () => {
+  const router = useRouter();
+  const [statusMessage, setStatusMessage] = useState("");
+  const [messageColor, setMessageColor] = useState("");
+
   const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
     const form = event.currentTarget;
@@ -23,10 +28,27 @@ const Signup: React.FC = () => {
         body: JSON.stringify(formData),
       });
       const data = await response.json();
-      console.log("Signup response:", data);
-      // Handle success (e.g., redirect, show message, etc.)
+
+      if (response.status === 409) {
+        // User already exists
+        setStatusMessage(data.message || "User already exists");
+        setMessageColor("text-red-500");
+        // Wait 3 seconds then redirect to sign-in page
+        setTimeout(() => router.push("/login"), 3000);
+      } else if (response.ok) {
+        // Account created successfully
+        setStatusMessage("Account created successfully");
+        setMessageColor("text-green-500");
+        setTimeout(() => router.push("/login"), 3000);
+      } else {
+        // Handle any other errors
+        setStatusMessage("An error occurred. Please try again.");
+        setMessageColor("text-red-500");
+      }
     } catch (error) {
       console.error("Error creating account:", error);
+      setStatusMessage("An error occurred. Please try again.");
+      setMessageColor("text-red-500");
     }
   };
 
@@ -36,15 +58,15 @@ const Signup: React.FC = () => {
         <title>SIGN UP</title>
       </Head>
 
-      <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-[#fff8f0] via-[#ffe3c1] to-[#ffe8cc] font-sans">
-        <div className="w-[90%] max-w-xl p-10 rounded-[18px] shadow-[0_12px_30px_rgba(255,111,0,0.25)] bg-gradient-to-br from-white to-[#fff5e6] animate-fadeIn">
-          <h1 className="text-center text-[#000000] mb-9 text-[34px] font-bold tracking-wide shadow-sm animate-slideInDown">
-            Welcome to Railways
+      <div className="min-h-screen flex items-center justify-center bg-white">
+        <div className="bg-white shadow-lg rounded px-8 pt-6 pb-8 w-[500px] animate-fadeIn">
+          <h1 className="text-center text-black mb-6 text-3xl font-bold animate-slideInDown">
+            Create Account
           </h1>
 
           <form className="flex flex-col gap-5" onSubmit={handleSubmit}>
             <div>
-              <label htmlFor="phone" className="block text-sm font-semibold text-gray-700">
+              <label htmlFor="phone" className="block text-sm font-semibold text-black">
                 Phone Number
               </label>
               <input
@@ -53,12 +75,12 @@ const Signup: React.FC = () => {
                 name="phone"
                 maxLength={15}
                 required
-                className="w-full p-3 border border-gray-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-orange-400 bg-[#fffefc]"
+                className="w-full p-3 border border-gray-300 rounded-lg text-sm text-black focus:outline-none focus:ring-2 focus:ring-gray-400 bg-white"
               />
             </div>
 
             <div>
-              <label htmlFor="email" className="block text-sm font-semibold text-gray-700">
+              <label htmlFor="email" className="block text-sm font-semibold text-black">
                 Email
               </label>
               <input
@@ -66,12 +88,12 @@ const Signup: React.FC = () => {
                 id="email"
                 name="email"
                 required
-                className="w-full p-3 border border-gray-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-orange-400 bg-[#fffefc]"
+                className="w-full p-3 border border-gray-300 rounded-lg text-sm text-black focus:outline-none focus:ring-2 focus:ring-gray-400 bg-white"
               />
             </div>
 
             <div>
-              <label htmlFor="password" className="block text-sm font-semibold text-gray-700">
+              <label htmlFor="password" className="block text-sm font-semibold text-black">
                 New Password
               </label>
               <input
@@ -79,12 +101,12 @@ const Signup: React.FC = () => {
                 id="password"
                 name="password"
                 required
-                className="w-full p-3 border border-gray-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-orange-400 bg-[#fffefc]"
+                className="w-full p-3 border border-gray-300 rounded-lg text-sm text-black focus:outline-none focus:ring-2 focus:ring-gray-400 bg-white"
               />
             </div>
 
             <div>
-              <label htmlFor="fullname" className="block text-sm font-semibold text-gray-700">
+              <label htmlFor="fullname" className="block text-sm font-semibold text-black">
                 Full Name
               </label>
               <input
@@ -92,12 +114,12 @@ const Signup: React.FC = () => {
                 id="fullname"
                 name="fullname"
                 required
-                className="w-full p-3 border border-gray-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-orange-400 bg-[#fffefc]"
+                className="w-full p-3 border border-gray-300 rounded-lg text-sm text-black focus:outline-none focus:ring-2 focus:ring-gray-400 bg-white"
               />
             </div>
 
             <div>
-              <label htmlFor="dob" className="block text-sm font-semibold text-gray-700">
+              <label htmlFor="dob" className="block text-sm font-semibold text-black">
                 Date of Birth
               </label>
               <input
@@ -105,19 +127,19 @@ const Signup: React.FC = () => {
                 id="dob"
                 name="dob"
                 required
-                className="w-full p-3 border border-gray-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-orange-400 bg-[#fffefc]"
+                className="w-full p-3 border border-gray-300 rounded-lg text-sm text-black focus:outline-none focus:ring-2 focus:ring-gray-400 bg-white"
               />
             </div>
 
             <div>
-              <label htmlFor="gender" className="block text-sm font-semibold text-gray-700">
+              <label htmlFor="gender" className="block text-sm font-semibold text-black">
                 Gender
               </label>
               <select
                 id="gender"
                 name="gender"
                 required
-                className="w-full p-3 border border-gray-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-orange-400 bg-[#fffefc]"
+                className="w-full p-3 border border-gray-300 rounded-lg text-sm text-black focus:outline-none focus:ring-2 focus:ring-gray-400 bg-white"
               >
                 <option value="">Select</option>
                 <option value="male">Male</option>
@@ -127,7 +149,7 @@ const Signup: React.FC = () => {
             </div>
 
             <div>
-              <label htmlFor="address" className="block text-sm font-semibold text-gray-700">
+              <label htmlFor="address" className="block text-sm font-semibold text-black">
                 Address
               </label>
               <textarea
@@ -135,12 +157,12 @@ const Signup: React.FC = () => {
                 name="address"
                 rows={3}
                 required
-                className="w-full p-3 border border-gray-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-orange-400 bg-[#fffefc]"
+                className="w-full p-3 border border-gray-300 rounded-lg text-sm text-black focus:outline-none focus:ring-2 focus:ring-gray-400 bg-white"
               ></textarea>
             </div>
 
             <div>
-              <label htmlFor="aadhaar" className="block text-sm font-semibold text-gray-700">
+              <label htmlFor="aadhaar" className="block text-sm font-semibold text-black">
                 Aadhaar Number
               </label>
               <input
@@ -149,17 +171,24 @@ const Signup: React.FC = () => {
                 name="aadhaar"
                 maxLength={12}
                 required
-                className="w-full p-3 border border-gray-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-orange-400 bg-[#fffefc]"
+                className="w-full p-3 border border-gray-300 rounded-lg text-sm text-black focus:outline-none focus:ring-2 focus:ring-gray-400 bg-white"
               />
             </div>
 
             <button
               type="submit"
-              className="w-full p-4 bg-gradient-to-br from-[#ff6f00] to-[#ffa726] text-white font-bold rounded-lg shadow-lg hover:from-[#e65c00] hover:to-[#fb8c00] transform hover:scale-105 transition duration-300"
+              className="w-full p-4 bg-gray-300 hover:bg-gray-400 text-black font-bold rounded-lg shadow-lg transition duration-300"
             >
               Create Account
             </button>
           </form>
+
+          {/* Display the message inside the page */}
+          {statusMessage && (
+            <p className={`mt-4 text-center text-lg font-semibold ${messageColor}`}>
+              {statusMessage}
+            </p>
+          )}
         </div>
       </div>
 
@@ -199,3 +228,4 @@ const Signup: React.FC = () => {
 };
 
 export default Signup;
+
