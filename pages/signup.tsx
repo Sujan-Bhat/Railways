@@ -33,8 +33,6 @@ const Signup: React.FC = () => {
         // User already exists
         setStatusMessage(data.message || "User already exists");
         setMessageColor("text-red-500");
-        // Wait 3 seconds then redirect to sign-in page
-        setTimeout(() => router.push("/login"), 3000);
       } else if (response.ok) {
         // Account created successfully
         setStatusMessage("Account created successfully");
