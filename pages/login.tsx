@@ -21,7 +21,7 @@ export default function Login() {
                 htmlFor="username"
                 className="block text-black text-sm font-bold mb-2"
               >
-                Username
+                Username/phone number 
               </label>
               <input
                 id="username"
