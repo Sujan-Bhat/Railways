@@ -4,16 +4,16 @@ import { useState } from "react";
 import Head from "next/head";
 
 const railwayStaff = [
-  { name: "Ajay Singh", designation: "Station Master" },
-  { name: "Neha Sharma", designation: "Ticket Inspector" },
-  { name: "Ravi Kumar", designation: "Train Controller" },
-  { name: "Sunita Patel", designation: "Customer Support" },
-  { name: "Anil Verma", designation: "Operations Manager" },
-  { name: "Priya Gupta", designation: "Safety Officer" },
-  { name: "Vikram Joshi", designation: "Maintenance Head" },
-  { name: "Kavita Rao", designation: "Reservation Officer" },
-  { name: "Suresh Iyer", designation: "Public Relations" },
-  { name: "Deepa Nair", designation: "Complaint Handler" },
+  { name: "Ajay Singh", phone: "9876543210", email: "ajay.singh@railways.gov.in", designation: "Station Master" },
+  { name: "Neha Sharma", phone: "9876543211", email: "neha.sharma@railways.gov.in", designation: "Ticket Inspector" },
+  { name: "Ravi Kumar", phone: "9876543212", email: "ravi.kumar@railways.gov.in", designation: "Train Controller" },
+  { name: "Sunita Patel", phone: "9876543213", email: "sunita.patel@railways.gov.in", designation: "Customer Support" },
+  { name: "Anil Verma", phone: "9876543214", email: "anil.verma@railways.gov.in", designation: "Operations Manager" },
+  { name: "Priya Gupta", phone: "9876543215", email: "priya.gupta@railways.gov.in", designation: "Safety Officer" },
+  { name: "Vikram Joshi", phone: "9876543216", email: "vikram.joshi@railways.gov.in", designation: "Maintenance Head" },
+  { name: "Kavita Rao", phone: "9876543217", email: "kavita.rao@railways.gov.in", designation: "Reservation Officer" },
+  { name: "Suresh Iyer", phone: "9876543218", email: "suresh.iyer@railways.gov.in", designation: "Public Relations" },
+  { name: "Deepa Nair", phone: "9876543219", email: "deepa.nair@railways.gov.in", designation: "Complaint Handler" },
 ];
 
 export default function ContactPage() {
@@ -26,7 +26,6 @@ export default function ContactPage() {
   const [error, setError] = useState("");
   const [success, setSuccess] = useState("");
 
-  // --- Function to submit the complaint data to the API route ---
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setLoading(true);
@@ -34,7 +33,6 @@ export default function ContactPage() {
     setSuccess("");
 
     try {
-      // <-- LINK: Posting complaint data to Next.js API endpoint -->
       const res = await fetch("/api/complaints", {
         method: "POST",
         headers: {
@@ -44,7 +42,7 @@ export default function ContactPage() {
           name: complainName,
           phone: complainPhone,
           email: complainEmail,
-          referTo,            // <-- Selected staff member from the datalist
+          referTo,
           message: complainMessage,
         }),
       });
@@ -55,8 +53,6 @@ export default function ContactPage() {
       }
 
       setSuccess("Complaint submitted successfully!");
-
-      // Reset form fields after successful submission
       setComplainName("");
       setComplainPhone("");
       setComplainEmail("");
@@ -76,25 +72,26 @@ export default function ContactPage() {
       </Head>
 
       <div className="bg-gray-100 min-h-screen py-10 px-4 sm:px-6 lg:px-8">
-        <div className="max-w-4xl mx-auto space-y-12">
+        <div className="max-w-5xl mx-auto space-y-12">
           <h1 className="text-4xl font-extrabold text-center text-gray-800">
             Railway Help & Contacts
           </h1>
 
-          {/* --- Display railway personnel list --- */}
+          {/* --- Display detailed railway personnel info --- */}
           <section>
             <h2 className="text-2xl font-semibold text-gray-700 mb-4">
               Railway Personnel
             </h2>
-            <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
-              {/* <-- LINK: Mapping railwayStaff array to show staff and designation --> */}
-              {railwayStaff.map(({ name, designation }) => (
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+              {railwayStaff.map(({ name, phone, email, designation }) => (
                 <div
                   key={name}
-                  className="p-4 bg-white rounded-lg shadow flex flex-col"
+                  className="p-4 bg-white rounded-lg shadow hover:shadow-md transition"
                 >
-                  <div className="text-lg font-bold text-red-500">{name}</div>
-                  <div className="text-gray-600">{designation}</div>
+                  <div className="text-xl font-bold text-red-600">{name}</div>
+                  <div className="text-gray-700">{designation}</div>
+                  <div className="text-sm text-gray-600 mt-1">📞 {phone}</div>
+                  <div className="text-sm text-gray-600">✉️ {email}</div>
                 </div>
               ))}
             </div>
@@ -106,17 +103,16 @@ export default function ContactPage() {
               Lodge a Complaint
             </h2>
             <form
-              onSubmit={handleSubmit}  // <-- LINK: form submit triggers handleSubmit -->
+              onSubmit={handleSubmit}
               className="bg-white p-6 rounded-xl shadow-md space-y-4"
             >
-              {/* Form inputs bound to React state */}
               <input
                 type="text"
                 placeholder="Your Name"
                 value={complainName}
                 onChange={(e) => setComplainName(e.target.value)}
                 required
-                className="w-full px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-red-500"
+                className="w-full px-4 py-2 border border-gray-300 rounded-md"
               />
               <input
                 type="tel"
@@ -124,7 +120,7 @@ export default function ContactPage() {
                 value={complainPhone}
                 onChange={(e) => setComplainPhone(e.target.value)}
                 required
-                className="w-full px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-red-500"
+                className="w-full px-4 py-2 border border-gray-300 rounded-md"
               />
               <input
                 type="email"
@@ -132,10 +128,9 @@ export default function ContactPage() {
                 value={complainEmail}
                 onChange={(e) => setComplainEmail(e.target.value)}
                 required
-                className="w-full px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-red-500"
+                className="w-full px-4 py-2 border border-gray-300 rounded-md"
               />
 
-              {/* Refer complaint to input with datalist to select railway staff */}
               <div>
                 <label className="block font-medium mb-1">
                   Refer Complaint To
@@ -147,9 +142,8 @@ export default function ContactPage() {
                   list="staffList"
                   required
                   placeholder="Choose staff member"
-                  className="w-full px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-red-500"
+                  className="w-full px-4 py-2 border border-gray-300 rounded-md"
                 />
-                {/* <-- LINK: datalist options populated from railwayStaff names --> */}
                 <datalist id="staffList">
                   {railwayStaff.map(({ name }) => (
                     <option key={name} value={name} />
@@ -163,13 +157,12 @@ export default function ContactPage() {
                   value={complainMessage}
                   onChange={(e) => setComplainMessage(e.target.value)}
                   rows={4}
-                  placeholder="Describe your issue here..."
                   required
-                  className="w-full px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-red-500 resize-none"
+                  placeholder="Describe your issue here..."
+                  className="w-full px-4 py-2 border border-gray-300 rounded-md resize-none"
                 />
               </div>
 
-              {/* Error and success message display */}
               {error && (
                 <p className="text-red-600 font-semibold">{error}</p>
               )}
@@ -180,7 +173,7 @@ export default function ContactPage() {
               <button
                 type="submit"
                 disabled={loading}
-                className="w-full py-3 bg-red-500 text-white font-bold rounded-md hover:bg-red-600 transition disabled:opacity-60"
+                className="w-full py-3 bg-red-500 text-white font-bold rounded-md hover:bg-red-600 transition"
               >
                 {loading ? "Submitting..." : "Submit Complaint"}
               </button>
