@@ -105,18 +105,6 @@ export default function BookingPage() {
         </div>
 
         <div className="flex gap-4">
-          <button
-            disabled={!isFormValid}
-            className={`px-4 py-2 rounded text-white ${
-              isFormValid
-                ? "bg-green-600 hover:bg-green-700 cursor-pointer"
-                : "bg-gray-400 cursor-not-allowed"
-            }`}
-          >
-            Pay Now
-          </button>
-
-          {/* Link wrapped Reserve button */}
           {isFormValid ? (
             <Link
               href={{
