@@ -35,7 +35,7 @@ export default function AdminLogin() {
     }
 
     if (adminId === "admin" && password === "admin") {
-      router.push("/dashboard"); // Navigate to the next page
+      router.push("/admin/dashboard"); // Navigate to the next page
     } else {
       setError("Invalid ID or password.");
     }
