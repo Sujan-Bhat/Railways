@@ -24,7 +24,7 @@ export default function Hero() {
       {/* Image content */}
       <div className="relative w-full md:w-1/2 h-64 md:h-96 mt-8 md:mt-0">
         <Image
-          src="/train.png"
+          src="/train.jpeg"
           alt="Train Journey"
           layout="fill"
           objectFit="contain"

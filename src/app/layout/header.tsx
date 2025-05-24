@@ -16,6 +16,10 @@ export default function Header() {
         <Link href="/booking" className="hover:text-red-500">
           Book Tickets
         </Link>
+         {/* Added About Us link */}
+        <Link href="/about" className="hover:text-red-500">
+          About Us
+        </Link>
         
         <Link href="/contact" className="hover:text-red-500">
           Contact
