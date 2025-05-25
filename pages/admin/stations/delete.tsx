@@ -13,7 +13,6 @@ interface Station {
 export default function ViewStations() {
   const [stations, setStations] = useState<Station[]>([]);
   const [loading, setLoading] = useState(true);
-  const [stationToDelete, setStationToDelete] = useState<Station | null>(null);
 
   useEffect(() => {
     fetchStations();
@@ -32,23 +31,15 @@ export default function ViewStations() {
     }
   };
 
-  const confirmDelete = (station: Station) => {
-    setStationToDelete(station);
-  };
+  const deleteStation = async (station_id: number) => {
+    if (!confirm("Are you sure you want to delete this station?")) return;
 
-  const cancelDelete = () => {
-    setStationToDelete(null);
-  };
-
-  const deleteStation = async () => {
-    if (!stationToDelete) return;
     try {
-      const res = await fetch(`/api/stations/delete?station_id=${stationToDelete.station_id}`, {
+      const res = await fetch(`/api/stations/delete?station_id=${station_id}`, {
         method: "DELETE",
       });
       if (!res.ok) throw new Error("Failed to delete station");
-      setStations((prev) => prev.filter((s) => s.station_id !== stationToDelete.station_id));
-      setStationToDelete(null);
+      setStations((prev) => prev.filter((s) => s.station_id !== station_id));
     } catch (error) {
       console.error("Error deleting station:", error);
     }
@@ -59,7 +50,6 @@ export default function ViewStations() {
       <Head>
         <title>View Stations</title>
       </Head>
-
       <div className="min-h-screen bg-gradient-to-br from-blue-200 via-indigo-100 to-white p-8">
         <div className="max-w-5xl mx-auto bg-white rounded-2xl shadow-2xl p-6">
           <h1 className="text-3xl font-bold mb-6 text-center text-gray-800">Station List</h1>
@@ -89,7 +79,10 @@ export default function ViewStations() {
                     <td className="p-2">
                       <button
                         type="button"
-                        onClick={() => confirmDelete(station)}
+                        onClick={(e) => {
+                          e.preventDefault();
+                          deleteStation(station.station_id);
+                        }}
                         className="text-red-600 hover:underline font-semibold"
                       >
                         Delete
@@ -102,39 +95,11 @@ export default function ViewStations() {
           )}
 
           <div className="mt-6 text-center">
-            <Link href="/admin/stations" className="text-blue-600 hover:underline">
+            <Link href="/admin/stations/station" className="text-blue-600 hover:underline">
               ← Back to Station Management
             </Link>
           </div>
         </div>
-
-        {/* Custom Confirmation Modal */}
-        {stationToDelete && (
-          <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-40 z-50">
-            <div className="bg-white rounded-lg shadow-lg max-w-sm w-full p-6 text-center">
-              <h2 className="text-xl font-semibold mb-4 text-gray-800">
-                Confirm Delete
-              </h2>
-              <p className="mb-6 text-gray-600">
-                Are you sure you want to delete station <strong>{stationToDelete.station_name}</strong>?
-              </p>
-              <div className="flex justify-center gap-4">
-                <button
-                  onClick={deleteStation}
-                  className="bg-red-600 text-white px-4 py-2 rounded hover:bg-red-700 transition"
-                >
-                  Confirm
-                </button>
-                <button
-                  onClick={cancelDelete}
-                  className="bg-gray-300 text-gray-800 px-4 py-2 rounded hover:bg-gray-400 transition"
-                >
-                  Cancel
-                </button>
-              </div>
-            </div>
-          </div>
-        )}
       </div>
     </>
   );
