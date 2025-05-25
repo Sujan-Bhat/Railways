@@ -3,9 +3,9 @@ import { useEffect, useState } from "react";
 
 interface Train {
   train_id: number;
-  train_num: string;
+  train_number: string;
   train_name: string;
-  train_type: string;
+  type: string;
   total_coaches: number;
 }
 
@@ -59,6 +59,7 @@ export default function RemoveTrain() {
       const data = await res.json();
       if (!res.ok) throw new Error(data.message || "Failed to delete train");
 
+      // Remove the deleted train from the list
       setTrains((prev) => prev.filter((t) => t.train_id !== selectedTrainId));
     } catch (err: any) {
       console.error(err);
@@ -74,8 +75,9 @@ export default function RemoveTrain() {
         <title>Remove Train</title>
       </Head>
 
-      <div className="min-h-screen bg-gradient-to-br from-blue-200 via-indigo-100 to-white p-6 flex flex-col items-center">
-        <h1 className="text-4xl font-extrabold mb-6 text-gray-800">Remove Train 🚆</h1>
+      {/* Outer container using a plain white background */}
+      <div className="min-h-screen bg-white p-6 flex flex-col items-center">
+        <h1 className="text-4xl font-bold mb-6 text-black">Remove Train 🚆</h1>
 
         {loading && <p className="text-gray-600">Loading trains...</p>}
         {error && <p className="text-red-600 mb-4">{error}</p>}
@@ -87,26 +89,24 @@ export default function RemoveTrain() {
         {!loading && trains.length > 0 && (
           <div className="overflow-x-auto w-full max-w-6xl rounded-lg shadow-lg bg-white">
             <table className="min-w-full table-auto border-collapse border border-gray-300">
-              <thead className="bg-indigo-200">
+              <thead className="bg-gray-100">
                 <tr>
-                  <th className="border border-gray-300 px-4 py-2 text-left">ID</th>
-                  <th className="border border-gray-300 px-4 py-2 text-left">Train Number</th>
-                  <th className="border border-gray-300 px-4 py-2 text-left">Name</th>
-                  <th className="border border-gray-300 px-4 py-2 text-left">Type</th>
-                  <th className="border border-gray-300 px-4 py-2 text-left">Total Coaches</th>
-                  <th className="border border-gray-300 px-4 py-2 text-center">Actions</th>
+                  <th className="border border-gray-300 px-4 py-2 text-left text-black">ID</th>
+                  <th className="border border-gray-300 px-4 py-2 text-left text-black">Train Number</th>
+                  <th className="border border-gray-300 px-4 py-2 text-left text-black">Train Name</th>
+                  <th className="border border-gray-300 px-4 py-2 text-left text-black">Type</th>
+                  <th className="border border-gray-300 px-4 py-2 text-left text-black">Total Coaches</th>
+                  <th className="border border-gray-300 px-4 py-2 text-center text-black">Actions</th>
                 </tr>
               </thead>
               <tbody>
                 {trains.map((train) => (
-                  <tr key={train.train_id} className="hover:bg-indigo-50">
-                    <td className="border border-gray-300 px-4 py-2">{train.train_id}</td>
-                    <td className="border border-gray-300 px-4 py-2 font-semibold text-indigo-700">
-                      {train.train_num}
-                    </td>
-                    <td className="border border-gray-300 px-4 py-2">{train.train_name}</td>
-                    <td className="border border-gray-300 px-4 py-2">{train.train_type}</td>
-                    <td className="border border-gray-300 px-4 py-2">{train.total_coaches}</td>
+                  <tr key={train.train_id} className="hover:bg-gray-50">
+                    <td className="border border-gray-300 px-4 py-2 text-black">{train.train_id}</td>
+                    <td className="border border-gray-300 px-4 py-2 font-semibold text-black">{train.train_number}</td>
+                    <td className="border border-gray-300 px-4 py-2 text-black">{train.train_name}</td>
+                    <td className="border border-gray-300 px-4 py-2 text-black">{train.type}</td>
+                    <td className="border border-gray-300 px-4 py-2 text-black">{train.total_coaches}</td>
                     <td className="border border-gray-300 px-4 py-2 text-center">
                       <button
                         onClick={() => openDeleteModal(train.train_id)}
@@ -122,12 +122,14 @@ export default function RemoveTrain() {
           </div>
         )}
 
-        {/* Custom Confirmation Modal */}
+        {/* Confirmation Modal */}
         {modalOpen && (
           <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
             <div className="bg-white rounded-xl shadow-lg p-6 w-full max-w-md text-center">
-              <h2 className="text-xl font-bold text-gray-800 mb-4">Confirm Deletion</h2>
-              <p className="text-gray-600 mb-6">Are you sure you want to delete this train?</p>
+              <h2 className="text-xl font-bold text-black mb-4">Confirm Deletion</h2>
+              <p className="text-gray-600 mb-6">
+                Are you sure you want to delete this train?
+              </p>
               <div className="flex justify-center gap-4">
                 <button
                   onClick={confirmDelete}
@@ -138,7 +140,7 @@ export default function RemoveTrain() {
                 </button>
                 <button
                   onClick={closeDeleteModal}
-                  className="bg-gray-300 hover:bg-gray-400 text-gray-800 px-4 py-2 rounded font-semibold transition duration-200"
+                  className="bg-gray-300 hover:bg-gray-400 text-black px-4 py-2 rounded font-semibold transition duration-200"
                 >
                   Cancel
                 </button>
@@ -150,3 +152,5 @@ export default function RemoveTrain() {
     </>
   );
 }
+
+

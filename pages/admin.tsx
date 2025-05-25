@@ -10,7 +10,7 @@ export default function AdminLogin() {
   const [error, setError] = useState("");
   const router = useRouter();
 
-  // Generate CAPTCHA only on client side
+  // Generate CAPTCHA on component mount
   useEffect(() => {
     setCaptcha(generateCaptcha());
   }, []);
@@ -35,7 +35,7 @@ export default function AdminLogin() {
     }
 
     if (adminId === "admin" && password === "admin") {
-      router.push("/admin/dashboard"); // Navigate to the next page
+      router.push("/admin/dashboard"); // Navigate to the admin dashboard
     } else {
       setError("Invalid ID or password.");
     }
@@ -46,29 +46,31 @@ export default function AdminLogin() {
       <Head>
         <title>Admin Login</title>
       </Head>
-      <div className="min-h-screen flex items-center justify-center bg-gray-100">
-        <div className="bg-white p-8 rounded-lg shadow-md w-full max-w-sm">
-          <h1 className="text-2xl font-bold mb-6 text-center">Admin Login</h1>
+      <div className="min-h-screen flex items-center justify-center bg-white">
+        <div className="bg-white p-8 rounded-lg shadow-md w-[500px]">
+          <h1 className="text-3xl font-bold mb-6 text-center text-black">
+            Admin Login
+          </h1>
           {error && <p className="text-red-500 mb-4">{error}</p>}
-
+          
           <input
             type="text"
             placeholder="Admin ID"
             value={adminId}
             onChange={(e) => setAdminId(e.target.value)}
-            className="w-full p-2 border rounded mb-4"
+            className="w-full p-3 border border-gray-300 rounded-xl text-black focus:ring-2 focus:ring-gray-400 bg-white mb-4"
           />
           <input
             type="password"
             placeholder="Password"
             value={password}
             onChange={(e) => setPassword(e.target.value)}
-            className="w-full p-2 border rounded mb-4"
+            className="w-full p-3 border border-gray-300 rounded-xl text-black focus:ring-2 focus:ring-gray-400 bg-white mb-4"
           />
 
           <div className="mb-4">
             <div className="flex items-center justify-between mb-1">
-              <p>
+              <p className="text-black">
                 CAPTCHA: <strong>{captcha}</strong>
               </p>
               <button
@@ -86,13 +88,13 @@ export default function AdminLogin() {
               placeholder="Enter CAPTCHA"
               value={captchaInput}
               onChange={(e) => setCaptchaInput(e.target.value)}
-              className="w-full p-2 border rounded"
+              className="w-full p-3 border border-gray-300 rounded-xl text-black focus:ring-2 focus:ring-gray-400 bg-white"
             />
           </div>
 
           <button
             onClick={handleLogin}
-            className="w-full bg-black text-white py-2 rounded hover:bg-gray-800"
+            className="w-full py-3 rounded-xl bg-gray-300 hover:bg-gray-400 text-black font-bold transition duration-200"
           >
             Login
           </button>
@@ -101,3 +103,4 @@ export default function AdminLogin() {
     </>
   );
 }
+

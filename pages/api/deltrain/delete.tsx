@@ -16,7 +16,7 @@ export default async function handler(
   }
 
   try {
-    const deleteQuery = `DELETE FROM train WHERE train_id = ?`;
+    const deleteQuery = `DELETE FROM trains WHERE train_id = ?`;
     const [result]: any = await pool.query(deleteQuery, [train_id]);
 
     if (result.affectedRows === 0) {

@@ -22,7 +22,7 @@ export default async function handler(
 
   try {
     const insertQuery = `
-      INSERT INTO train (train_num, train_name, train_type, total_coaches)
+      INSERT INTO trains (train_number, train_name, type, total_coaches)
       VALUES (?, ?, ?, ?)
     `;
 

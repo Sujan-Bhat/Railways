@@ -17,14 +17,16 @@ export default function BookingPage() {
   const [amount, setAmount] = useState("₹250.00"); // Placeholder
 
   const filterStations = (input: string, exclude?: string) => {
-    return stationList.filter(
-      (station) =>
-        station.toLowerCase().includes(input.toLowerCase()) &&
-        station !== exclude
-    ).slice(0, 10);
+    return stationList
+      .filter(
+        (station) =>
+          station.toLowerCase().includes(input.toLowerCase()) &&
+          station !== exclude
+      )
+      .slice(0, 10);
   };
 
-  // Validation: all fields must be filled AND fromStation !== toStation
+  // Check if all fields are properly filled and the stations differ.
   const isFormValid =
     phone.trim() !== "" &&
     password.trim() !== "" &&
@@ -37,99 +39,115 @@ export default function BookingPage() {
       <Head>
         <title>Book Ticket</title>
       </Head>
+      <div className="min-h-screen flex items-center justify-center bg-white">
+        <div className="bg-white p-8 rounded-xl shadow-md w-[500px]">
+          <h1 className="text-3xl font-bold mb-6 text-center text-black">
+            Book Your Ticket
+          </h1>
 
-      <div className="max-w-xl mx-auto mt-10 p-6 bg-white rounded-xl shadow-md space-y-6">
-        <h1 className="text-2xl font-bold text-red-500">Book Your Ticket</h1>
-
-        <div>
-          <label className="block font-medium mb-1">Phone Number</label>
-          <input
-            type="tel"
-            value={phone}
-            onChange={(e) => setPhone(e.target.value)}
-            className="w-full border rounded px-3 py-2"
-            placeholder="Enter phone number"
-          />
-        </div>
-
-        <div>
-          <label className="block font-medium mb-1">Password</label>
-          <input
-            type="password"
-            value={password}
-            onChange={(e) => setPassword(e.target.value)}
-            className="w-full border rounded px-3 py-2"
-            placeholder="Enter password"
-          />
-        </div>
-
-        <div>
-          <label className="block font-medium mb-1">From Station</label>
-          <input
-            type="text"
-            value={fromStation}
-            onChange={(e) => setFromStation(e.target.value)}
-            className="w-full border rounded px-3 py-2"
-            placeholder="Enter from station"
-            list="fromStations"
-          />
-          <datalist id="fromStations">
-            {filterStations(fromStation, toStation).map((station) => (
-              <option key={station} value={station} />
-            ))}
-          </datalist>
-        </div>
-
-        <div>
-          <label className="block font-medium mb-1">To Station</label>
-          <input
-            type="text"
-            value={toStation}
-            onChange={(e) => setToStation(e.target.value)}
-            className="w-full border rounded px-3 py-2"
-            placeholder="Enter to station"
-            list="toStations"
-          />
-          <datalist id="toStations">
-            {filterStations(toStation, fromStation).map((station) => (
-              <option key={station} value={station} />
-            ))}
-          </datalist>
-        </div>
-
-        <div>
-          <label className="block font-medium mb-1">Amount to be Paid</label>
-          <div className="w-full border rounded px-3 py-2 bg-gray-100">
-            {amount}
+          {/* Phone Number Field */}
+          <div>
+            <label className="block text-sm font-semibold text-black mb-1">
+              Phone Number
+            </label>
+            <input
+              type="tel"
+              value={phone}
+              onChange={(e) => setPhone(e.target.value)}
+              placeholder="Enter phone number"
+              className="w-full p-3 border border-gray-300 rounded-xl text-black focus:ring-2 focus:ring-gray-400 bg-white mb-4"
+            />
           </div>
-        </div>
 
-        <div className="flex gap-4">
-          {isFormValid ? (
-            <Link
-              href={{
-                pathname: "/reserve",
-                query: {
-                  from: fromStation,
-                  to: toStation,
-                  amount: amount,
-                },
-              }}
-            >
-              <button className="px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700">
+          {/* Password Field */}
+          <div>
+            <label className="block text-sm font-semibold text-black mb-1">
+              Password
+            </label>
+            <input
+              type="password"
+              value={password}
+              onChange={(e) => setPassword(e.target.value)}
+              placeholder="Enter password"
+              className="w-full p-3 border border-gray-300 rounded-xl text-black focus:ring-2 focus:ring-gray-400 bg-white mb-4"
+            />
+          </div>
+
+          {/* From Station Field */}
+          <div>
+            <label className="block text-sm font-semibold text-black mb-1">
+              From Station
+            </label>
+            <input
+              type="text"
+              value={fromStation}
+              onChange={(e) => setFromStation(e.target.value)}
+              placeholder="Enter from station"
+              list="fromStations"
+              className="w-full p-3 border border-gray-300 rounded-xl text-black focus:ring-2 focus:ring-gray-400 bg-white mb-4"
+            />
+            <datalist id="fromStations">
+              {filterStations(fromStation, toStation).map((station) => (
+                <option key={station} value={station} />
+              ))}
+            </datalist>
+          </div>
+
+          {/* To Station Field */}
+          <div>
+            <label className="block text-sm font-semibold text-black mb-1">
+              To Station
+            </label>
+            <input
+              type="text"
+              value={toStation}
+              onChange={(e) => setToStation(e.target.value)}
+              placeholder="Enter to station"
+              list="toStations"
+              className="w-full p-3 border border-gray-300 rounded-xl text-black focus:ring-2 focus:ring-gray-400 bg-white mb-4"
+            />
+            <datalist id="toStations">
+              {filterStations(toStation, fromStation).map((station) => (
+                <option key={station} value={station} />
+              ))}
+            </datalist>
+          </div>
+
+          {/* Amount Display */}
+          <div>
+            <label className="block text-sm font-semibold text-black mb-1">
+              Amount to be Paid
+            </label>
+            <div className="w-full p-3 border border-gray-300 rounded-xl bg-gray-100 text-black mb-4">
+              {amount}
+            </div>
+          </div>
+
+          {/* Reserve Button */}
+          <div className="flex justify-center">
+            {isFormValid ? (
+              <Link
+                href={{
+                  pathname: "/reserve",
+                  query: { from: fromStation, to: toStation, amount: amount },
+                }}
+              >
+                <button className="w-full py-3 rounded-xl bg-gray-300 hover:bg-gray-400 text-black font-bold transition duration-200">
+                  Reserve
+                </button>
+              </Link>
+            ) : (
+              <button
+                disabled
+                className="w-full py-3 rounded-xl bg-gray-400 text-white font-bold transition duration-200 cursor-not-allowed"
+              >
                 Reserve
               </button>
-            </Link>
-          ) : (
-            <button
-              disabled
-              className="px-4 py-2 bg-gray-400 text-white rounded cursor-not-allowed"
-            >
-              Reserve
-            </button>
-          )}
+            )}
+          </div>
         </div>
       </div>
     </>
   );
 }
+
