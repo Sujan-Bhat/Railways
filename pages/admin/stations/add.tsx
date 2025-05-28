@@ -15,14 +15,13 @@ const stationList = [
   { station_name: "Lucknow NR", city: "Lucknow", state: "Uttar Pradesh" },
   { station_name: "Patna Junction", city: "Patna", state: "Bihar" },
   { station_name: "Kanpur Central", city: "Kanpur", state: "Uttar Pradesh" },
-  // Add more stations as needed
 ];
 
 export default function AddStation() {
   const [stationCode, setStationCode] = useState("");
   const [stationName, setStationName] = useState("");
   const [city, setCity] = useState("");
-  const [state, setState] = useState("");
+  const [stateVal, setStateVal] = useState(""); // using stateVal to avoid name conflict with React's state hook
   const [filteredStations, setFilteredStations] = useState<typeof stationList>([]);
   const [showSuggestions, setShowSuggestions] = useState(false);
   const [loading, setLoading] = useState(false);
@@ -36,7 +35,7 @@ export default function AddStation() {
     if (stationName.trim() === "") {
       setFilteredStations([]);
       setCity("");
-      setState("");
+      setStateVal("");
       setShowSuggestions(false);
       return;
     }
@@ -66,7 +65,7 @@ export default function AddStation() {
     setShowSuggestions(false); // Close dropdown first
     setStationName(station.station_name);
     setCity(station.city);
-    setState(station.state);
+    setStateVal(station.state);
   };
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -74,7 +73,7 @@ export default function AddStation() {
     setError("");
     setSuccess("");
 
-    if (!stationCode.trim() || !stationName.trim() || !city.trim() || !state.trim()) {
+    if (!stationCode.trim() || !stationName.trim() || !city.trim() || !stateVal.trim()) {
       setError("All fields are required");
       return;
     }
@@ -84,7 +83,12 @@ export default function AddStation() {
       const res = await fetch("/api/stations/add", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ station_code: stationCode, station_name: stationName, city, state }),
+        body: JSON.stringify({
+          station_code: stationCode,
+          station_name: stationName,
+          city,
+          state: stateVal,
+        }),
       });
 
       const data = await res.json();
@@ -96,7 +100,7 @@ export default function AddStation() {
         setStationCode("");
         setStationName("");
         setCity("");
-        setState("");
+        setStateVal("");
       }
     } catch {
       setError("Something went wrong");
@@ -109,46 +113,22 @@ export default function AddStation() {
     <>
       <Head>
         <title>Add Station</title>
-        <style>{`
-          /* Animate dropdown fade and slide */
-          .suggestions-enter {
-            opacity: 0;
-            transform: translateY(-8px);
-          }
-          .suggestions-enter-active {
-            opacity: 1;
-            transform: translateY(0);
-            transition: opacity 200ms ease, transform 200ms ease;
-          }
-          .suggestions-exit {
-            opacity: 1;
-            transform: translateY(0);
-          }
-          .suggestions-exit-active {
-            opacity: 0;
-            transform: translateY(-8px);
-            transition: opacity 200ms ease, transform 200ms ease;
-          }
-        `}</style>
       </Head>
-
-      <div className="min-h-screen bg-gradient-to-br from-blue-200 via-indigo-100 to-white flex flex-col items-center justify-center px-4 py-10">
-        <div className="bg-white shadow-2xl rounded-2xl p-10 w-full max-w-xl">
-          <h1 className="text-4xl font-extrabold text-gray-800 mb-6 text-center">
+      <div className="min-h-screen bg-white flex items-center justify-center px-4 py-10">
+        <div className="bg-white shadow-xl rounded-xl p-10 w-full max-w-xl">
+          <h1 className="text-4xl font-extrabold text-black mb-6 text-center">
             Add Station
           </h1>
-
           <form onSubmit={handleSubmit} className="space-y-6" autoComplete="off">
             <input
               type="text"
               placeholder="Station Code (e.g. NDLS)"
               value={stationCode}
               onChange={(e) => setStationCode(e.target.value.toUpperCase())}
-              className="w-full px-4 py-3 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-400"
+              className="w-full px-4 py-3 border border-gray-300 rounded-xl text-black focus:ring-2 focus:ring-gray-400 bg-white"
               required
               autoComplete="off"
             />
-
             <div className="relative">
               <input
                 ref={inputRef}
@@ -156,9 +136,9 @@ export default function AddStation() {
                 placeholder="Station Name"
                 value={stationName}
                 onChange={(e) => setStationName(e.target.value)}
-                className="w-full px-4 py-3 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-400"
-                autoComplete="off"
+                className="w-full px-4 py-3 border border-gray-300 rounded-xl text-black focus:ring-2 focus:ring-gray-400 bg-white"
                 required
+                autoComplete="off"
                 onFocus={() => {
                   if (filteredStations.length > 0) setShowSuggestions(true);
                 }}
@@ -166,17 +146,12 @@ export default function AddStation() {
               {showSuggestions && (
                 <ul
                   ref={suggestionsRef}
-                  className="absolute z-10 bg-white border border-gray-300 rounded-md w-full max-h-48 overflow-y-auto mt-1 shadow-lg
-                    transition-opacity duration-200 ease-in-out
-                    opacity-100
-                    transform translate-y-0
-                  "
-                  // You could toggle opacity/transform here dynamically for more control
+                  className="absolute z-10 bg-white border border-gray-300 rounded-xl w-full max-h-48 overflow-y-auto mt-1 shadow-lg transition-opacity duration-200 ease-in-out"
                 >
                   {filteredStations.map((station) => (
                     <li
                       key={station.station_name}
-                      className="px-4 py-2 hover:bg-blue-100 cursor-pointer"
+                      className="px-4 py-2 hover:bg-gray-100 cursor-pointer text-black"
                       onClick={() => handleSelectSuggestion(station)}
                     >
                       {station.station_name}
@@ -185,40 +160,35 @@ export default function AddStation() {
                 </ul>
               )}
             </div>
-
             <input
               type="text"
               placeholder="City"
               value={city}
               onChange={(e) => setCity(e.target.value)}
-              className="w-full px-4 py-3 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-400"
+              className="w-full px-4 py-3 border border-gray-300 rounded-xl text-black focus:ring-2 focus:ring-gray-400 bg-white"
               required
             />
-
             <input
               type="text"
               placeholder="State"
-              value={state}
-              onChange={(e) => setState(e.target.value)}
-              className="w-full px-4 py-3 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-400"
+              value={stateVal}
+              onChange={(e) => setStateVal(e.target.value)}
+              className="w-full px-4 py-3 border border-gray-300 rounded-xl text-black focus:ring-2 focus:ring-gray-400 bg-white"
               required
             />
-
             {error && <p className="text-red-600 font-semibold">{error}</p>}
             {success && <p className="text-green-600 font-semibold">{success}</p>}
-
             <button
               type="submit"
               disabled={loading}
-              className="w-full py-3 bg-blue-600 hover:bg-blue-700 text-white font-bold rounded-md transition"
+              className="w-full py-3 bg-orange-500 hover:bg-orange-600 text-white font-bold rounded-xl transition"
             >
               {loading ? "Adding Station..." : "Add Station"}
             </button>
           </form>
-
           <div className="mt-6 text-center">
-            <Link href="/admin/stations" legacyBehavior>
-              <a className="text-blue-600 hover:underline cursor-pointer font-semibold">
+            <Link href="/admin/stations/station" legacyBehavior>
+              <a className="text-orange-500 hover:underline cursor-pointer font-semibold">
                 &larr; Back to Stations
               </a>
             </Link>
@@ -228,3 +198,4 @@ export default function AddStation() {
     </>
   );
 }
+

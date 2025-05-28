@@ -50,52 +50,59 @@ export default function ViewStations() {
       <Head>
         <title>View Stations</title>
       </Head>
-      <div className="min-h-screen bg-gradient-to-br from-blue-200 via-indigo-100 to-white p-8">
-        <div className="max-w-5xl mx-auto bg-white rounded-2xl shadow-2xl p-6">
-          <h1 className="text-3xl font-bold mb-6 text-center text-gray-800">Station List</h1>
+      {/* Outer container with a plain white background */}
+      <div className="min-h-screen bg-white p-6 flex flex-col items-center">
+        {/* Central card container */}
+        <div className="max-w-5xl mx-auto bg-white rounded-xl shadow-lg p-8">
+          <h1 className="text-3xl font-bold mb-6 text-center text-black">Station List</h1>
 
           {loading ? (
-            <p className="text-center text-gray-500">Loading...</p>
+            <p className="text-center text-black">Loading...</p>
           ) : stations.length === 0 ? (
-            <p className="text-center text-gray-500">No stations found.</p>
+            <p className="text-center text-black">No stations found.</p>
           ) : (
-            <table className="w-full border text-left text-sm">
-              <thead className="bg-gray-100">
-                <tr>
-                  <th className="p-2">Code</th>
-                  <th className="p-2">Name</th>
-                  <th className="p-2">City</th>
-                  <th className="p-2">State</th>
-                  <th className="p-2">Action</th>
-                </tr>
-              </thead>
-              <tbody>
-                {stations.map((station) => (
-                  <tr key={station.station_id} className="border-b hover:bg-gray-50">
-                    <td className="p-2">{station.station_code}</td>
-                    <td className="p-2">{station.station_name}</td>
-                    <td className="p-2">{station.city}</td>
-                    <td className="p-2">{station.state}</td>
-                    <td className="p-2">
-                      <button
-                        type="button"
-                        onClick={(e) => {
-                          e.preventDefault();
-                          deleteStation(station.station_id);
-                        }}
-                        className="text-red-600 hover:underline font-semibold"
-                      >
-                        Delete
-                      </button>
-                    </td>
+            <div className="overflow-x-auto w-full">
+              <table className="min-w-full table-auto border-collapse border border-gray-300">
+                <thead className="bg-gray-100">
+                  <tr>
+                    <th className="p-2 text-left text-black">Code</th>
+                    <th className="p-2 text-left text-black">Name</th>
+                    <th className="p-2 text-left text-black">City</th>
+                    <th className="p-2 text-left text-black">State</th>
+                    <th className="p-2 text-center text-black">Action</th>
                   </tr>
-                ))}
-              </tbody>
-            </table>
+                </thead>
+                <tbody>
+                  {stations.map((station) => (
+                    <tr key={station.station_id} className="border-b hover:bg-gray-50">
+                      <td className="p-2 text-black">{station.station_code}</td>
+                      <td className="p-2 text-black">{station.station_name}</td>
+                      <td className="p-2 text-black">{station.city}</td>
+                      <td className="p-2 text-black">{station.state}</td>
+                      <td className="p-2 text-center">
+                        <button
+                          type="button"
+                          onClick={(e) => {
+                            e.preventDefault();
+                            deleteStation(station.station_id);
+                          }}
+                          className="px-3 py-1 rounded bg-red-500 hover:bg-red-600 text-white font-semibold transition duration-200"
+                        >
+                          Delete
+                        </button>
+                      </td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
           )}
 
           <div className="mt-6 text-center">
-            <Link href="/admin/stations/station" className="text-blue-600 hover:underline">
+            <Link
+              href="/admin/stations/station"
+              className="text-black hover:underline"
+            >
               ← Back to Station Management
             </Link>
           </div>
@@ -104,3 +111,4 @@ export default function ViewStations() {
     </>
   );
 }
+
