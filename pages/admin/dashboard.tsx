@@ -28,7 +28,7 @@ export default function AdminDashboard() {
               </button>
             </Link>
 
-            <Link href="/admin/schedule">
+            <Link href="/admin/schedules/shedule">
               <button className="w-full py-3 rounded-xl bg-cyan-400 hover:bg-cyan-500 text-white font-semibold shadow-md transition duration-200">
                 Schedule
               </button>
