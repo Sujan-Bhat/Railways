@@ -10,7 +10,7 @@ export default function Header() {
         <Link href="/" className="hover:text-red-500">
           Home
         </Link>
-        <Link href="/schedules" className="hover:text-red-500">
+        <Link href="/train_schedules_for_users" className="hover:text-red-500">
           Schedules
         </Link>
         <Link href="/booking" className="hover:text-red-500">
