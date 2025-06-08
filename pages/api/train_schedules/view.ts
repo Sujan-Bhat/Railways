@@ -18,7 +18,8 @@ export default async function handler(
         t.train_name,
         s.station_name,
         ts.arrival_time,
-        ts.departure_time
+        ts.departure_time,
+        s.city
       FROM train_schedules ts
       JOIN trains t ON ts.train_id = t.train_id
       JOIN stations s ON ts.station_id = s.station_id

@@ -1,150 +1,180 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import Head from "next/head";
-import Link from "next/link";
+import { useRouter } from "next/router";
 
-const stationList = [
-  "New Delhi", "Mumbai Central", "Chennai Central", "Howrah", "Secunderabad",
-  "Bangalore City", "Ahmedabad", "Pune", "Kolkata", "Jaipur"
-];
+interface Station {
+  station_id: number;
+  station_name: string;
+}
 
-export default function BookingPage() {
-  const [phone, setPhone] = useState("");
-  const [password, setPassword] = useState("");
-  const [fromStation, setFromStation] = useState("");
-  const [toStation, setToStation] = useState("");
-  const [amount, setAmount] = useState("₹250.00"); // Placeholder
+interface Train {
+  train_id: number;
+  train_name: string;
+}
 
-  const filterStations = (input: string, exclude?: string) => {
-    return stationList
-      .filter(
-        (station) =>
-          station.toLowerCase().includes(input.toLowerCase()) &&
-          station !== exclude
-      )
-      .slice(0, 10);
+export default function BookTicket() {
+  const router = useRouter();
+  const [trains, setTrains] = useState<Train[]>([]);
+  const [stations, setStations] = useState<Station[]>([]);
+  const [formData, setFormData] = useState({
+    // When integrated with auth, user_id is fetched on the backend.
+    train_id: "",
+    from_station_id: "",
+    to_station_id: "",
+    journey_date: "",
+    status: "Confirmed", // default status
+  });
+  const [bookingSuccess, setBookingSuccess] = useState("");
+  const [error, setError] = useState("");
+
+  // Fetch stations and trains when the component mounts.
+  useEffect(() => {
+    fetchStations();
+    fetchTrains();
+  }, []);
+
+  const fetchStations = async () => {
+    try {
+      const res = await fetch("/api/stations/getAll");
+      if (!res.ok) throw new Error("Failed to fetch stations");
+      const data = await res.json();
+      setStations(data.stations);
+    } catch (err: any) {
+      setError(err.message || "Error fetching stations");
+    }
   };
 
-  // Check if all fields are properly filled and the stations differ.
-  const isFormValid =
-    phone.trim() !== "" &&
-    password.trim() !== "" &&
-    fromStation.trim() !== "" &&
-    toStation.trim() !== "" &&
-    fromStation !== toStation;
+  const fetchTrains = async () => {
+    try {
+      const res = await fetch("/api/deltrain");
+      if (!res.ok) throw new Error("Failed to fetch trains");
+      const data = await res.json();
+      setTrains(data.trains);
+    } catch (err: any) {
+      setError(err.message || "Error fetching trains");
+    }
+  };
+
+  const handleInputChange = (
+    e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>
+  ) => {
+    setFormData({ ...formData, [e.target.name]: e.target.value });
+  };
+
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    setError("");
+    setBookingSuccess("");
+
+    try {
+      const res = await fetch("/api/bookings/create", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        // The formData already includes "status": "Confirmed"
+        body: JSON.stringify(formData),
+      });
+      const data = await res.json();
+      if (!res.ok) throw new Error(data.message || "Failed to book ticket");
+
+      setBookingSuccess(`Booking Successful! Your Booking ID is ${data.booking_id}`);
+      // Redirect to home page after 2 seconds.
+      setTimeout(() => router.push("/"), 2000);
+    } catch (err: any) {
+      setError(err.message || "Error processing booking");
+    }
+  };
 
   return (
     <>
       <Head>
-        <title>Book Ticket</title>
+        <title>Book Train Ticket</title>
       </Head>
-      <div className="min-h-screen flex items-center justify-center bg-white">
-        <div className="bg-white p-8 rounded-xl shadow-md w-[500px]">
-          <h1 className="text-3xl font-bold mb-6 text-center text-black">
-            Book Your Ticket
-          </h1>
+      <div className="min-h-screen bg-white p-6 flex flex-col items-center text-black">
+        <div className="max-w-5xl w-full bg-white border border-red-500 rounded-xl shadow-lg p-8">
+          <h1 className="text-4xl font-bold text-center mb-8">Book Train Ticket</h1>
 
-          {/* Phone Number Field */}
-          <div>
-            <label className="block text-sm font-semibold text-black mb-1">
-              Phone Number
-            </label>
-            <input
-              type="tel"
-              value={phone}
-              onChange={(e) => setPhone(e.target.value)}
-              placeholder="Enter phone number"
-              className="w-full p-3 border border-gray-300 rounded-xl text-black focus:ring-2 focus:ring-gray-400 bg-white mb-4"
-            />
-          </div>
+          {error && <p className="text-red-500 text-center mb-4">{error}</p>}
+          {bookingSuccess && <p className="text-red-500 text-center mb-4">{bookingSuccess}</p>}
 
-          {/* Password Field */}
-          <div>
-            <label className="block text-sm font-semibold text-black mb-1">
-              Password
-            </label>
-            <input
-              type="password"
-              value={password}
-              onChange={(e) => setPassword(e.target.value)}
-              placeholder="Enter password"
-              className="w-full p-3 border border-gray-300 rounded-xl text-black focus:ring-2 focus:ring-gray-400 bg-white mb-4"
-            />
-          </div>
-
-          {/* From Station Field */}
-          <div>
-            <label className="block text-sm font-semibold text-black mb-1">
-              From Station
-            </label>
-            <input
-              type="text"
-              value={fromStation}
-              onChange={(e) => setFromStation(e.target.value)}
-              placeholder="Enter from station"
-              list="fromStations"
-              className="w-full p-3 border border-gray-300 rounded-xl text-black focus:ring-2 focus:ring-gray-400 bg-white mb-4"
-            />
-            <datalist id="fromStations">
-              {filterStations(fromStation, toStation).map((station) => (
-                <option key={station} value={station} />
-              ))}
-            </datalist>
-          </div>
-
-          {/* To Station Field */}
-          <div>
-            <label className="block text-sm font-semibold text-black mb-1">
-              To Station
-            </label>
-            <input
-              type="text"
-              value={toStation}
-              onChange={(e) => setToStation(e.target.value)}
-              placeholder="Enter to station"
-              list="toStations"
-              className="w-full p-3 border border-gray-300 rounded-xl text-black focus:ring-2 focus:ring-gray-400 bg-white mb-4"
-            />
-            <datalist id="toStations">
-              {filterStations(toStation, fromStation).map((station) => (
-                <option key={station} value={station} />
-              ))}
-            </datalist>
-          </div>
-
-          {/* Amount Display */}
-          <div>
-            <label className="block text-sm font-semibold text-black mb-1">
-              Amount to be Paid
-            </label>
-            <div className="w-full p-3 border border-gray-300 rounded-xl bg-gray-100 text-black mb-4">
-              {amount}
+          <form onSubmit={handleSubmit} className="space-y-4">
+            <div>
+              <label className="block font-semibold mb-1">Train</label>
+              <select
+                name="train_id"
+                value={formData.train_id}
+                onChange={handleInputChange}
+                className="w-full p-2 border border-gray-300 rounded bg-white text-black"
+                required
+              >
+                <option value="">Select Train</option>
+                {trains.map((train) => (
+                  <option key={train.train_id} value={train.train_id}>
+                    {train.train_name}
+                  </option>
+                ))}
+              </select>
             </div>
-          </div>
 
-          {/* Reserve Button */}
-          <div className="flex justify-center">
-            {isFormValid ? (
-              <Link
-                href={{
-                  pathname: "/reserve",
-                  query: { from: fromStation, to: toStation, amount: amount },
-                }}
+            <div>
+              <label className="block font-semibold mb-1">From Station</label>
+              <select
+                name="from_station_id"
+                value={formData.from_station_id}
+                onChange={handleInputChange}
+                className="w-full p-2 border border-gray-300 rounded bg-white text-black"
+                required
               >
-                <button className="w-full py-3 rounded-xl bg-gray-300 hover:bg-gray-400 text-black font-bold transition duration-200">
-                  Reserve
-                </button>
-              </Link>
-            ) : (
-              <button
-                disabled
-                className="w-full py-3 rounded-xl bg-gray-400 text-white font-bold transition duration-200 cursor-not-allowed"
+                <option value="">Select Source Station</option>
+                {stations.map((station) => (
+                  <option key={station.station_id} value={station.station_id}>
+                    {station.station_name}
+                  </option>
+                ))}
+              </select>
+            </div>
+
+            <div>
+              <label className="block font-semibold mb-1">To Station</label>
+              <select
+                name="to_station_id"
+                value={formData.to_station_id}
+                onChange={handleInputChange}
+                className="w-full p-2 border border-gray-300 rounded bg-white text-black"
+                required
               >
-                Reserve
-              </button>
-            )}
-          </div>
+                <option value="">Select Destination Station</option>
+                {stations.map((station) => (
+                  <option key={station.station_id} value={station.station_id}>
+                    {station.station_name}
+                  </option>
+                ))}
+              </select>
+            </div>
+
+            <div>
+              <label className="block font-semibold mb-1">Journey Date</label>
+              <input
+                type="date"
+                name="journey_date"
+                value={formData.journey_date}
+                onChange={handleInputChange}
+                className="w-full p-2 border border-gray-300 rounded bg-white text-black"
+                required
+              />
+            </div>
+
+            {/* A hidden input ensures that "status" is sent; note that the state also provides this. */}
+            <input type="hidden" name="status" value="Confirmed" />
+
+            <button
+              type="submit"
+              className="w-full py-2 bg-red-500 hover:bg-red-600 text-white font-bold rounded"
+            >
+              Book Ticket
+            </button>
+          </form>
         </div>
       </div>
     </>

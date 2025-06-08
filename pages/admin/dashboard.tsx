@@ -34,7 +34,7 @@ export default function AdminDashboard() {
               </button>
             </Link>
 
-            <Link href="/admin/passengers">
+            <Link href="/admin/passenger/passengerdetail">
               <button className="w-full py-3 rounded-xl bg-teal-400 hover:bg-teal-500 text-white font-semibold shadow-md transition duration-200">
                 Passenger Details
               </button>

@@ -1,6 +1,7 @@
 // pages/api/signup.ts
 import type { NextApiRequest, NextApiResponse } from "next";
 import pool from "../../lib/db";
+import { hash } from "bcryptjs";
 
 export default async function handler(req: NextApiRequest, res: NextApiResponse) {
   if (req.method !== "POST") {
@@ -19,7 +20,10 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
       return res.status(409).json({ message: "User already exists" });
     }
 
-    // User does not exist, so insert the new record
+    // Hash the password before insertion using bcryptjs with 12 salt rounds
+    const hashedPassword = await hash(password, 12);
+
+    // Insert the new record using the hashed password
     const insertQuery = `
       INSERT INTO users (phone, email, password, fullname, dob, gender, address, aadhaar)
       VALUES (?, ?, ?, ?, ?, ?, ?, ?)
@@ -27,7 +31,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
     const [result]: any = await pool.query(insertQuery, [
       phone,
       email,
-      password,
+      hashedPassword,
       fullname,
       dob,
       gender,
@@ -41,5 +45,4 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
     return res.status(500).json({ error: "Server error" });
   }
 }
-
 
