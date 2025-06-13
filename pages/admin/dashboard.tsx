@@ -18,7 +18,7 @@ export default function AdminDashboard() {
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-5">
             <Link href="/admin/stations/station">
               <button className="w-full py-3 rounded-xl bg-blue-400 hover:bg-blue-500 text-white font-semibold shadow-md transition duration-200">
-                Station Add / Delete
+                Station
               </button>
             </Link>
 

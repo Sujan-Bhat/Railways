@@ -7,7 +7,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
   }
 
   try {
-    const [rows]: any = await pool.query("SELECT station_id, station_code, station_name, city, state FROM stations ORDER BY station_id DESC");
+    const [rows]: any = await pool.query("SELECT station_id, station_code, station_name, city, state FROM stations ORDER BY station_id ASC");
     return res.status(200).json({ stations: rows });
   } catch (error) {
     console.error("Error fetching stations:", error);

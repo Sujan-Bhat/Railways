@@ -7,7 +7,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
   }
   try {
     const [rows] = await pool.query(
-      "SELECT train_id, train_number, train_name, type, total_coaches FROM trains ORDER BY train_id DESC"
+      "SELECT train_id, train_number, train_name, type, total_coaches FROM trains ORDER BY train_id ASC"
     );
     res.status(200).json({ trains: rows });
   } catch (error) {

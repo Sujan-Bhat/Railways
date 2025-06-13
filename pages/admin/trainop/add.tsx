@@ -2,17 +2,22 @@ import Head from "next/head";
 import { useState } from "react";
 
 export default function AddTrain() {
+  // Train related states
   const [trainNo, setTrainNo] = useState("");
   const [trainName, setTrainName] = useState("");
   const [trainType, setTrainType] = useState("");
-  const [coaches, setCoaches] = useState("");
+  // Instead of a single input, we use an array to hold coach details.
+  const [coachDetails, setCoachDetails] = useState([
+    { coachType: "", quantity: "", capacity: "" },
+  ]);
   const [showSuggestions, setShowSuggestions] = useState(false);
   const [loading, setLoading] = useState(false);
 
-  // State for messages
+  // States for messages
   const [errorMessage, setErrorMessage] = useState("");
   const [successMessage, setSuccessMessage] = useState("");
 
+  // Options for train names (for suggestions)
   const trainNameOptions = [
     "Shatabdi Express",
     "Rajdhani Express",
@@ -40,24 +45,66 @@ export default function AddTrain() {
     name.toLowerCase().includes(trainName.toLowerCase())
   );
 
+  // Functions to manage dynamic coach details
+
+  // Update a specific coach detail field
+  const handleCoachDetailChange = (
+    index: number,
+    field: "coachType" | "quantity" | "capacity",
+    value: string
+  ) => {
+    const updated = [...coachDetails];
+    updated[index] = { ...updated[index], [field]: value };
+    setCoachDetails(updated);
+  };
+
+  // Add a new empty coach detail row
+  const addCoachDetail = () => {
+    setCoachDetails([
+      ...coachDetails,
+      { coachType: "", quantity: "", capacity: "" },
+    ]);
+  };
+
+  // Remove an existing coach detail row
+  const removeCoachDetail = (index: number) => {
+    const updated = [...coachDetails];
+    updated.splice(index, 1);
+    setCoachDetails(updated);
+  };
+
   async function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
     setErrorMessage("");
     setSuccessMessage("");
 
-    if (!trainNo || !trainName || !trainType || !coaches) {
-      setErrorMessage("Please fill all fields");
+    // Validate train-related fields
+    if (!trainNo || !trainName || !trainType) {
+      setErrorMessage("Please fill all train fields");
       return;
     }
 
-    if (Number(coaches) < 0) {
-      setErrorMessage("Total coaches cannot be negative");
+    // Validate each coach detail row
+    if (coachDetails.length === 0) {
+      setErrorMessage("Please add at least one coach detail");
       return;
+    }
+    for (let i = 0; i < coachDetails.length; i++) {
+      const { coachType, quantity, capacity } = coachDetails[i];
+      if (!coachType || !quantity || !capacity) {
+        setErrorMessage("Please fill all fields in coach details");
+        return;
+      }
+      if (Number(quantity) < 1 || Number(capacity) < 1) {
+        setErrorMessage("Quantity and capacity must be at least 1");
+        return;
+      }
     }
 
     setLoading(true);
 
     try {
+      // Submit the form data to your API endpoint.
       const response = await fetch("/api/add", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
@@ -65,7 +112,7 @@ export default function AddTrain() {
           trainNo,
           trainName,
           trainType,
-          coaches,
+          coachDetails, // Send the array of coach details along with train info
         }),
       });
 
@@ -75,10 +122,11 @@ export default function AddTrain() {
         setErrorMessage(data.message || "Something went wrong");
       } else {
         setSuccessMessage("Train added successfully!");
+        // Clear all form fields once submission succeeds
         setTrainNo("");
         setTrainName("");
         setTrainType("");
-        setCoaches("");
+        setCoachDetails([{ coachType: "", quantity: "", capacity: "" }]);
       }
     } catch (error) {
       setErrorMessage("Failed to submit");
@@ -93,21 +141,18 @@ export default function AddTrain() {
         <title>Add Train</title>
       </Head>
 
-      {/* Outer container */}
       <div className="min-h-screen flex items-center justify-center bg-white">
         <div className="bg-white shadow-lg rounded px-8 pt-6 pb-8 w-[500px] animate-fadeIn">
           <h2 className="text-center text-black mb-6 text-3xl font-bold animate-slideInDown">
             Add New Train 🚆
           </h2>
 
-          {/* Display error message */}
           {errorMessage && (
             <div className="mb-4 text-red-600 font-semibold">
               {errorMessage}
             </div>
           )}
 
-          {/* Display success message */}
           {successMessage && (
             <div className="mb-4 text-green-600 font-semibold">
               {successMessage}
@@ -165,7 +210,7 @@ export default function AddTrain() {
               )}
             </div>
 
-            {/* Train Type Dropdown*/}
+            {/* Train Type Dropdown */}
             <div className="mb-4 relative">
               <label className="block text-sm font-semibold text-black mb-1">
                 Train Type
@@ -185,30 +230,107 @@ export default function AddTrain() {
                 <option value="LOC">Local</option>
                 <option value="MAIL">Mail</option>
               </select>
-              {/* Custom arrow icon */}
               <div className="pointer-events-none absolute inset-y-0 right-0 flex items-center px-2 text-black">
                 <svg
                   className="fill-current h-4 w-4"
                   viewBox="0 0 20 20"
                 >
-                  <path d="M5.516 7.548L10 12.032l4.484-4.484a1 1 0 011.414 1.414l-5.191 5.19a1 1 0 01-1.414 0L4.102 8.962A1 1 0 015.516 7.548z"/>
+                  <path d="M5.516 7.548L10 12.032l4.484-4.484a1 1 0 011.414 1.414l-5.191 5.19a1 1 0 01-1.414 0L4.102 8.962A1 1 0 015.516 7.548z" />
                 </svg>
               </div>
             </div>
 
-            {/* Total Coaches */}
+            {/* Coach Details Section */}
             <div className="mb-6">
               <label className="block text-sm font-semibold text-black mb-1">
-                Total Coaches
+                Coach Details
               </label>
-              <input
-                type="number"
-                value={coaches}
-                onChange={(e) => setCoaches(e.target.value)}
-                min="0"
-                required
-                className="w-full p-3 border border-gray-300 rounded-xl text-black focus:ring-2 focus:ring-gray-400 bg-white"
-              />
+              {coachDetails.map((detail, index) => (
+                <div
+                  key={index}
+                  className="flex flex-col mb-4 border p-2 rounded"
+                >
+                  <div className="mb-2">
+                    <label className="block text-sm font-semibold text-black mb-1">
+                      Coach Type
+                    </label>
+                    <select
+                      value={detail.coachType}
+                      onChange={(e) =>
+                        handleCoachDetailChange(
+                          index,
+                          "coachType",
+                          e.target.value
+                        )
+                      }
+                      required
+                      className="w-full p-2 border border-gray-300 rounded bg-white text-black"
+                    >
+                      <option value="" disabled>
+                        Select Coach Type
+                      </option>
+                      <option value="AC First">AC First</option>
+                      <option value="AC Second">AC Second</option>
+                      <option value="Sleeper">Sleeper</option>
+                      <option value="General">General</option>
+                    </select>
+                  </div>
+                  <div className="mb-2">
+                    <label className="block text-sm font-semibold text-black mb-1">
+                      Quantity
+                    </label>
+                    <input
+                      type="number"
+                      value={detail.quantity}
+                      onChange={(e) =>
+                        handleCoachDetailChange(
+                          index,
+                          "quantity",
+                          e.target.value
+                        )
+                      }
+                      required
+                      min="1"
+                      className="w-full p-2 border border-gray-300 rounded bg-white text-black"
+                    />
+                  </div>
+                  <div>
+                    <label className="block text-sm font-semibold text-black mb-1">
+                      Capacity per Coach
+                    </label>
+                    <input
+                      type="number"
+                      value={detail.capacity}
+                      onChange={(e) =>
+                        handleCoachDetailChange(
+                          index,
+                          "capacity",
+                          e.target.value
+                        )
+                      }
+                      required
+                      min="1"
+                      className="w-full p-2 border border-gray-300 rounded bg-white text-black"
+                    />
+                  </div>
+                  {coachDetails.length > 1 && (
+                    <button
+                      type="button"
+                      onClick={() => removeCoachDetail(index)}
+                      className="mt-2 text-sm text-red-500 self-end"
+                    >
+                      Remove
+                    </button>
+                  )}
+                </div>
+              ))}
+              <button
+                type="button"
+                onClick={addCoachDetail}
+                className="w-full px-4 py-2 bg-blue-500 hover:bg-blue-600 text-white rounded"
+              >
+                Add Coach
+              </button>
             </div>
 
             <button
@@ -224,7 +346,6 @@ export default function AddTrain() {
         </div>
       </div>
 
-      
       <style jsx>{`
         @keyframes fadeIn {
           from {
@@ -236,7 +357,6 @@ export default function AddTrain() {
             transform: translateY(0);
           }
         }
-
         @keyframes slideInDown {
           from {
             opacity: 0;
@@ -247,11 +367,9 @@ export default function AddTrain() {
             transform: translateY(0);
           }
         }
-
         .animate-fadeIn {
           animation: fadeIn 1s ease-in-out;
         }
-
         .animate-slideInDown {
           animation: slideInDown 0.8s ease-in-out;
         }
@@ -259,5 +377,4 @@ export default function AddTrain() {
     </>
   );
 }
-
 
