@@ -1,6 +1,7 @@
 "use client";
 
 import { useState, useEffect, ChangeEvent, FormEvent } from "react";
+// Corrected import path for layout
 import Head from "next/head";
 
 interface Schedule {
@@ -344,4 +345,5 @@ export default function ManageSchedules() {
     </>
   );
 }
+
 

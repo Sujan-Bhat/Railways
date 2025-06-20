@@ -76,11 +76,11 @@ export default function RemoveStation() {
         <title>Remove Station </title>
       </Head>
 
-      <div className="min-h-screen bg-white p-6 flex flex-col items-center">
-        <h1 className="text-4xl font-bold mb-6 text-black">Remove Station 🚉</h1>
+      <div className="min-h-screen bg-[#ECF0F1] p-6 flex flex-col items-center text-[#2C3E50]">
+        <h1 className="text-4xl font-bold mb-6 text-[#2C3E50]">Remove Station 🚉</h1>
 
-        {loading && <p className="text-gray-600 text-black">Loading stations...</p>}
-        {error && <p className="text-red-600 mb-4">{error}</p>}
+        {loading && <p className="text-[#95A5A6]">Loading stations...</p>}
+        {error && <p className="text-[#E74C3C] mb-4">{error}</p>}
         {!loading && stations.length === 0 && (
           <p className="text-gray-600 text-black">No stations found.</p>
         )}
@@ -88,14 +88,14 @@ export default function RemoveStation() {
         {!loading && stations.length > 0 && (
           <div className="overflow-x-auto w-full max-w-6xl rounded-lg shadow-lg bg-white">
             <table className="min-w-full table-auto border-collapse border border-gray-300">
-              <thead className="bg-gray-100">
+              <thead className="bg-[#2C3E50] text-[#ECF0F1]">
                 <tr>
-                  <th className="border border-gray-300 px-4 py-2 text-left text-black">ID</th>
-                  <th className="border border-gray-300 px-4 py-2 text-left text-black">Code</th>
-                  <th className="border border-gray-300 px-4 py-2 text-left text-black">Name</th>
-                  <th className="border border-gray-300 px-4 py-2 text-left text-black">City</th>
-                  <th className="border border-gray-300 px-4 py-2 text-left text-black">State</th>
-                  <th className="border border-gray-300 px-4 py-2 text-center text-black">Actions</th>
+                  <th className="border border-gray-300 px-4 py-2 text-center">ID</th>
+                  <th className="border border-gray-300 px-4 py-2 text-center">Code</th>
+                  <th className="border border-gray-300 px-4 py-2 text-center">Station-Name</th>
+                  <th className="border border-gray-300 px-4 py-2 text-center">City</th>
+                  <th className="border border-gray-300 px-4 py-2 text-center">State</th>
+                  <th className="border border-gray-300 px-4 py-2 text-center">Actions</th>
                 </tr>
               </thead>
               <tbody>
@@ -109,7 +109,7 @@ export default function RemoveStation() {
                     <td className="border border-gray-300 px-4 py-2 text-center">
                       <button
                         onClick={() => openDeleteModal(station.station_id)}
-                        className="px-3 py-1 rounded bg-red-500 hover:bg-red-600 text-white font-semibold transition duration-200"
+                        className="px-3 py-1 rounded bg-[#E74C3C] hover:bg-[#C0392B] text-white font-semibold transition duration-200"
                       >
                         Delete
                       </button>
@@ -125,15 +125,15 @@ export default function RemoveStation() {
         {modalOpen && (
           <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
             <div className="bg-white rounded-xl shadow-lg p-6 w-full max-w-md text-center">
-              <h2 className="text-xl font-bold text-black mb-4">Confirm Deletion</h2>
+              <h2 className="text-xl font-bold text-[#2C3E50] mb-4">Confirm Deletion</h2>
               <p className="text-gray-600 mb-6">
                 Are you sure you want to delete this station?
               </p>
               <div className="flex justify-center gap-4">
                 <button
                   onClick={confirmDelete}
-                  disabled={deletingId === selectedStationId}
-                  className="bg-red-500 hover:bg-red-600 text-white px-4 py-2 rounded font-semibold transition duration-200"
+                  disabled={deletingId === selectedStationId }
+                  className="bg-[#E74C3C] hover:bg-[#C0392B] text-white px-4 py-2 rounded font-semibold transition duration-200"
                 >
                   {deletingId === selectedStationId ? "Deleting..." : "Yes, Delete"}
                 </button>
@@ -148,8 +148,8 @@ export default function RemoveStation() {
           </div>
         )}
 
-        <div className="mt-6 text-center">
-          <Link href="/admin/stations/station" className="text-black hover:underline">
+        <div className="mt-6 text-center color-">
+          <Link href="/admin/stations/station" className="text-blue-600 hover:underline font-semibold">
             ← Back to Station Management
           </Link>
         </div>
@@ -157,4 +157,7 @@ export default function RemoveStation() {
     </>
   );
 }
+
+
+
 

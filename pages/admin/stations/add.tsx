@@ -112,7 +112,7 @@ export default function AddStation() {
   return (
     <>
       <Head>
-        <title>Add Station</title>
+ <title>Add Station - Admin</title>
       </Head>
       <div className="min-h-screen bg-white flex items-center justify-center px-4 py-10">
         <div className="bg-white shadow-xl rounded-xl p-10 w-full max-w-xl">
@@ -125,7 +125,7 @@ export default function AddStation() {
               placeholder="Station Code (e.g. NDLS)"
               value={stationCode}
               onChange={(e) => setStationCode(e.target.value.toUpperCase())}
-              className="w-full px-4 py-3 border border-gray-300 rounded-xl text-black focus:ring-2 focus:ring-gray-400 bg-white"
+ className="w-full px-4 py-3 border border-trackGrey rounded-xl text-black focus:ring-2 focus:ring-signalGold bg-stationWhite"
               required
               autoComplete="off"
             />
@@ -136,7 +136,7 @@ export default function AddStation() {
                 placeholder="Station Name"
                 value={stationName}
                 onChange={(e) => setStationName(e.target.value)}
-                className="w-full px-4 py-3 border border-gray-300 rounded-xl text-black focus:ring-2 focus:ring-gray-400 bg-white"
+ className="w-full px-4 py-3 border border-trackGrey rounded-xl text-black focus:ring-2 focus:ring-signalGold bg-stationWhite"
                 required
                 autoComplete="off"
                 onFocus={() => {
@@ -146,12 +146,12 @@ export default function AddStation() {
               {showSuggestions && (
                 <ul
                   ref={suggestionsRef}
-                  className="absolute z-10 bg-white border border-gray-300 rounded-xl w-full max-h-48 overflow-y-auto mt-1 shadow-lg transition-opacity duration-200 ease-in-out"
+ className="absolute z-10 bg-stationWhite border border-trackGrey rounded-xl w-full max-h-48 overflow-y-auto mt-1 shadow-lg transition-opacity duration-200 ease-in-out"
                 >
                   {filteredStations.map((station) => (
                     <li
                       key={station.station_name}
-                      className="px-4 py-2 hover:bg-gray-100 cursor-pointer text-black"
+ className="px-4 py-2 hover:bg-gray-200 cursor-pointer text-black"
                       onClick={() => handleSelectSuggestion(station)}
                     >
                       {station.station_name}
@@ -165,7 +165,7 @@ export default function AddStation() {
               placeholder="City"
               value={city}
               onChange={(e) => setCity(e.target.value)}
-              className="w-full px-4 py-3 border border-gray-300 rounded-xl text-black focus:ring-2 focus:ring-gray-400 bg-white"
+ className="w-full px-4 py-3 border border-trackGrey rounded-xl text-black focus:ring-2 focus:ring-signalGold bg-stationWhite"
               required
             />
             <input
@@ -173,15 +173,15 @@ export default function AddStation() {
               placeholder="State"
               value={stateVal}
               onChange={(e) => setStateVal(e.target.value)}
-              className="w-full px-4 py-3 border border-gray-300 rounded-xl text-black focus:ring-2 focus:ring-gray-400 bg-white"
+ className="w-full px-4 py-3 border border-trackGrey rounded-xl text-black focus:ring-2 focus:ring-signalGold bg-stationWhite"
               required
             />
-            {error && <p className="text-red-600 font-semibold">{error}</p>}
-            {success && <p className="text-green-600 font-semibold">{success}</p>}
+ {error && <p className="text-alertRed font-semibold">{error}</p>}
+ {success && <p className="text-green-600 font-semibold">{success}</p>}{/* Assuming success color is fine, or define a success color */}
             <button
               type="submit"
               disabled={loading}
-              className="w-full py-3 bg-orange-500 hover:bg-orange-600 text-white font-bold rounded-xl transition"
+ className="w-full py-3 bg-signalGold hover:bg-yellow-600 text-railwayNavy font-bold rounded-xl transition"
             >
               {loading ? "Adding Station..." : "Add Station"}
             </button>
@@ -189,7 +189,7 @@ export default function AddStation() {
           <div className="mt-6 text-center">
             <Link href="/admin/stations/station" legacyBehavior>
               <a className="text-orange-500 hover:underline cursor-pointer font-semibold">
-                &larr; Back to Stations
+ <span className="text-blue-600 hover:underline font-semibold">&larr; Back to Stations</span>
               </a>
             </Link>
           </div>
@@ -198,4 +198,7 @@ export default function AddStation() {
     </>
   );
 }
+
+
+
 

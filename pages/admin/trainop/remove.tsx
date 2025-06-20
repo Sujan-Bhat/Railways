@@ -1,5 +1,6 @@
 import Head from "next/head";
 import { useEffect, useState } from "react";
+import { useRouter } from "next/router"; // Using next/router for pages directory
 
 interface Train {
   train_id: number;
@@ -17,11 +18,13 @@ export default function RemoveTrain() {
   const [modalOpen, setModalOpen] = useState(false);
   const [selectedTrainId, setSelectedTrainId] = useState<number | null>(null);
 
+  const router = useRouter();
+
   async function fetchTrains() {
     setLoading(true);
     setError("");
     try {
-      const res = await fetch("/api/deltrain");
+      const res = await fetch("/api/deltrain"); // Your API to fetch trains
       if (!res.ok) throw new Error("Failed to fetch trains");
       const data = await res.json();
       setTrains(data.trains);
@@ -62,7 +65,7 @@ export default function RemoveTrain() {
       // Remove the deleted train from the list
       setTrains((prev) => prev.filter((t) => t.train_id !== selectedTrainId));
     } catch (err: any) {
-      console.error(err);
+      console.error("Error deleting train:", err);
     } finally {
       setDeletingId(null);
       closeDeleteModal();
@@ -75,82 +78,98 @@ export default function RemoveTrain() {
         <title>Remove Train</title>
       </Head>
 
-      {/* Outer container using a plain white background */}
-      <div className="min-h-screen bg-white p-6 flex flex-col items-center">
-        <h1 className="text-4xl font-bold mb-6 text-black">Remove Train 🚆</h1>
+      <div className="min-h-screen bg-[#ECF0F1] p-4 md:p-6 flex flex-col items-center text-[#2C3E50]">
+        <div className="w-full max-w-6xl bg-white p-6 rounded-lg shadow-md">
+          <h1 className="text-3xl md:text-4xl font-bold mb-6 text-[#2C3E50] text-center">
+            Remove Train 🚆
+          </h1>
 
-        {loading && <p className="text-gray-600">Loading trains...</p>}
-        {error && <p className="text-red-600 mb-4">{error}</p>}
+          {loading && <p className="text-[#95A5A6]">Loading trains...</p>}
+          {error && <p className="text-[#E74C3C] mb-4">{error}</p>}
+          {!loading && trains.length === 0 && (
+            <p className="text-[#95A5A6]">No trains found in the system.</p>
+          )}
 
-        {!loading && trains.length === 0 && (
-          <p className="text-gray-600">No trains found in the system.</p>
-        )}
-
-        {!loading && trains.length > 0 && (
-          <div className="overflow-x-auto w-full max-w-6xl rounded-lg shadow-lg bg-white">
-            <table className="min-w-full table-auto border-collapse border border-gray-300">
-              <thead className="bg-gray-100">
-                <tr>
-                  <th className="border border-gray-300 px-4 py-2 text-left text-black">ID</th>
-                  <th className="border border-gray-300 px-4 py-2 text-left text-black">Train Number</th>
-                  <th className="border border-gray-300 px-4 py-2 text-left text-black">Train Name</th>
-                  <th className="border border-gray-300 px-4 py-2 text-left text-black">Type</th>
-                  <th className="border border-gray-300 px-4 py-2 text-left text-black">Total Coaches</th>
-                  <th className="border border-gray-300 px-4 py-2 text-center text-black">Actions</th>
-                </tr>
-              </thead>
-              <tbody>
-                {trains.map((train) => (
-                  <tr key={train.train_id} className="hover:bg-gray-50">
-                    <td className="border border-gray-300 px-4 py-2 text-black">{train.train_id}</td>
-                    <td className="border border-gray-300 px-4 py-2 font-semibold text-black">{train.train_number}</td>
-                    <td className="border border-gray-300 px-4 py-2 text-black">{train.train_name}</td>
-                    <td className="border border-gray-300 px-4 py-2 text-black">{train.type}</td>
-                    <td className="border border-gray-300 px-4 py-2 text-black">{train.total_coaches}</td>
-                    <td className="border border-gray-300 px-4 py-2 text-center">
-                      <button
-                        onClick={() => openDeleteModal(train.train_id)}
-                        className="px-3 py-1 rounded bg-red-500 hover:bg-red-600 text-white font-semibold transition duration-200"
-                      >
-                        Delete
-                      </button>
-                    </td>
+          {!loading && trains.length > 0 && (
+            <div className="overflow-x-auto w-full">
+              <table className="min-w-full table-auto border-collapse">
+                <thead className="bg-[#2C3E50] text-[#ECF0F1]">
+                  <tr>
+                    <th className="px-4 py-3 text-left">ID</th>
+                    <th className="px-4 py-3 text-left">Train Number</th>
+                    <th className="px-4 py-3 text-left">Train Name</th>
+                    <th className="px-4 py-3 text-left">Type</th>
+                    <th className="px-4 py-3 text-left">Total Coaches</th>
+                    <th className="px-4 py-3 text-center">Actions</th>
                   </tr>
-                ))}
-              </tbody>
-            </table>
-          </div>
-        )}
+                </thead>
+                <tbody className="text-[#2C3E50]">
+                  {trains.map((train) => (
+                    <tr
+                      key={train.train_id}
+                      className="border-b border-[#95A5A6] last:border-b-0 hover:bg-gray-100"
+                    >
+                      <td className="px-4 py-3">{train.train_id}</td>
+                      <td className="px-4 py-3 font-semibold">
+                        {train.train_number}
+                      </td>
+                      <td className="px-4 py-3">{train.train_name}</td>
+                      <td className="px-4 py-3">{train.type}</td>
+                      <td className="px-4 py-3">{train.total_coaches}</td>
+                      <td className="px-4 py-3 text-center space-x-2">
+                        <button
+                          onClick={() => openDeleteModal(train.train_id)}
+                          className="px-4 py-2 rounded bg-[#E74C3C] hover:bg-[#C0392B] text-white font-semibold transition duration-200"
+                        >
+                          Delete
+                        </button>
+                        <button
+                          onClick={() =>
+                            router.push(
+                              `/admin/trainop/edit?train_id=${train.train_id}`
+                            )
+                          }
+                          className="px-4 py-2 rounded bg-blue-500 hover:bg-blue-600 text-white font-semibold transition duration-200"
+                        >
+                          Edit
+                        </button>
+                      </td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
+          )}
 
-        {/* Confirmation Modal */}
-        {modalOpen && (
-          <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
-            <div className="bg-white rounded-xl shadow-lg p-6 w-full max-w-md text-center">
-              <h2 className="text-xl font-bold text-black mb-4">Confirm Deletion</h2>
-              <p className="text-gray-600 mb-6">
-                Are you sure you want to delete this train?
-              </p>
-              <div className="flex justify-center gap-4">
-                <button
-                  onClick={confirmDelete}
-                  disabled={deletingId === selectedTrainId}
-                  className="bg-red-500 hover:bg-red-600 text-white px-4 py-2 rounded font-semibold transition duration-200"
-                >
-                  {deletingId === selectedTrainId ? "Deleting..." : "Yes, Delete"}
-                </button>
-                <button
-                  onClick={closeDeleteModal}
-                  className="bg-gray-300 hover:bg-gray-400 text-black px-4 py-2 rounded font-semibold transition duration-200"
-                >
-                  Cancel
-                </button>
+          {/* Confirmation Modal for Delete */}
+          {modalOpen && (
+            <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
+              <div className="bg-[#ECF0F1] rounded-xl shadow-lg p-6 w-full max-w-md text-center text-[#2C3E50]">
+                <h2 className="text-xl font-bold mb-4">Confirm Deletion</h2>
+                <p className="text-[#4A4A4A] mb-6">
+                  Are you sure you want to delete this train?
+                </p>
+                <div className="flex justify-center gap-4">
+                  <button
+                    onClick={confirmDelete}
+                    disabled={deletingId === selectedTrainId}
+                    className="bg-[#E74C3C] hover:bg-[#C0392B] text-white px-4 py-2 rounded font-semibold transition duration-200"
+                  >
+                    {deletingId === selectedTrainId ? "Deleting..." : "Yes, Delete"}
+                  </button>
+                  <button
+                    onClick={closeDeleteModal}
+                    className="bg-[#95A5A6] hover:bg-[#7F8C8D] text-[#2C3E50] px-4 py-2 rounded font-semibold transition duration-200"
+                  >
+                    Cancel
+                  </button>
+                </div>
               </div>
             </div>
-          </div>
-        )}
+          )}
+        </div>
       </div>
     </>
   );
 }
-
 

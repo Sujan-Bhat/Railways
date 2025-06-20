@@ -141,8 +141,8 @@ export default function AddTrain() {
         <title>Add Train</title>
       </Head>
 
-      <div className="min-h-screen flex items-center justify-center bg-white">
-        <div className="bg-white shadow-lg rounded px-8 pt-6 pb-8 w-[500px] animate-fadeIn">
+ <div className="min-h-screen bg-[#ECF0F1] py-10 px-4 flex items-center justify-center">
+        <div className="bg-white shadow-xl rounded-xl p-8 w-full max-w-md md:max-w-lg lg:max-w-xl animate-fadeIn">
           <h2 className="text-center text-black mb-6 text-3xl font-bold animate-slideInDown">
             Add New Train 🚆
           </h2>
@@ -170,7 +170,7 @@ export default function AddTrain() {
                 value={trainNo}
                 onChange={(e) => setTrainNo(e.target.value)}
                 required
-                className="w-full p-3 border border-gray-300 rounded-xl text-black focus:ring-2 focus:ring-gray-400 bg-white"
+                className="w-full px-4 py-3 border border-[#95A5A6] rounded-xl text-[#2C3E50] focus:outline-none focus:ring-2 focus:ring-[#F39C12] bg-white"
               />
             </div>
 
@@ -189,7 +189,7 @@ export default function AddTrain() {
                 onFocus={() => setShowSuggestions(true)}
                 onBlur={() => setTimeout(() => setShowSuggestions(false), 100)}
                 required
-                autoComplete="off"
+                autoComplete="new-password" // Use a non-standard value to prevent unwanted browser autofill
                 className="w-full p-3 border border-gray-300 rounded-xl text-black focus:ring-2 focus:ring-gray-400 bg-white"
               />
               {showSuggestions && trainName && (
@@ -201,7 +201,7 @@ export default function AddTrain() {
                         setTrainName(name);
                         setShowSuggestions(false);
                       }}
-                      className="px-4 py-2 text-black hover:bg-gray-200 cursor-pointer"
+                      className="px-4 py-2 text-[#2C3E50] hover:bg-[#ECF0F1] cursor-pointer transition"
                     >
                       {name}
                     </li>
@@ -219,12 +219,12 @@ export default function AddTrain() {
                 value={trainType}
                 onChange={(e) => setTrainType(e.target.value)}
                 required
-                className="w-full p-3 border border-gray-300 rounded-xl text-black focus:ring-2 focus:ring-gray-400 bg-white appearance-none"
+                className="w-full px-4 py-3 border border-[#95A5A6] rounded-xl text-[#2C3E50] focus:outline-none focus:ring-2 focus:ring-[#F39C12] bg-white appearance-none"
               >
                 <option value="" disabled hidden>
                   Select Train Type
                 </option>
-                <option value="EXP">Express</option>
+                <option value="EXP">Express Train</option>
                 <option value="PAS">Passenger</option>
                 <option value="SUP">Superfast</option>
                 <option value="LOC">Local</option>
@@ -232,7 +232,7 @@ export default function AddTrain() {
               </select>
               <div className="pointer-events-none absolute inset-y-0 right-0 flex items-center px-2 text-black">
                 <svg
-                  className="fill-current h-4 w-4"
+                  className="fill-current h-4 w-4 text-[#2C3E50]"
                   viewBox="0 0 20 20"
                 >
                   <path d="M5.516 7.548L10 12.032l4.484-4.484a1 1 0 011.414 1.414l-5.191 5.19a1 1 0 01-1.414 0L4.102 8.962A1 1 0 015.516 7.548z" />
@@ -245,7 +245,7 @@ export default function AddTrain() {
               <label className="block text-sm font-semibold text-black mb-1">
                 Coach Details
               </label>
-              {coachDetails.map((detail, index) => (
+              {coachDetails.map((detail, index) => ( 
                 <div
                   key={index}
                   className="flex flex-col mb-4 border p-2 rounded"
@@ -265,6 +265,7 @@ export default function AddTrain() {
                       }
                       required
                       className="w-full p-2 border border-gray-300 rounded bg-white text-black"
+
                     >
                       <option value="" disabled>
                         Select Coach Type
@@ -291,7 +292,7 @@ export default function AddTrain() {
                       }
                       required
                       min="1"
-                      className="w-full p-2 border border-gray-300 rounded bg-white text-black"
+                      className="w-full p-2 border border-[#95A5A6] rounded-xl text-[#2C3E50] focus:outline-none focus:ring-2 focus:ring-[#F39C12] bg-white"
                     />
                   </div>
                   <div>
@@ -310,24 +311,25 @@ export default function AddTrain() {
                       }
                       required
                       min="1"
-                      className="w-full p-2 border border-gray-300 rounded bg-white text-black"
+                      className="w-full p-2 border border-[#95A5A6] rounded-xl text-[#2C3E50] focus:outline-none focus:ring-2 focus:ring-[#F39C12] bg-white"
                     />
                   </div>
                   {coachDetails.length > 1 && (
                     <button
                       type="button"
                       onClick={() => removeCoachDetail(index)}
-                      className="mt-2 text-sm text-red-500 self-end"
+                      className="mt-2 text-sm text-[#E74C3C] hover:text-[#C0392B] self-end transition"
                     >
                       Remove
                     </button>
                   )}
                 </div>
-              ))}
+              ))
+              }
               <button
                 type="button"
                 onClick={addCoachDetail}
-                className="w-full px-4 py-2 bg-blue-500 hover:bg-blue-600 text-white rounded"
+                className="w-full px-4 py-2 bg-blue-500 hover:bg-blue-600 font-bold text-white rounded"
               >
                 Add Coach
               </button>
@@ -336,7 +338,7 @@ export default function AddTrain() {
             <button
               type="submit"
               disabled={loading}
-              className={`w-full py-3 rounded-xl bg-orange-500 hover:bg-orange-600 text-white font-bold transition duration-200 ${
+              className={`w-full py-3 rounded-xl bg-[#F39C12] hover:bg-[#E08E0B] text-white font-bold transition duration-200 ${
                 loading ? "opacity-70 cursor-not-allowed" : ""
               }`}
             >
@@ -377,4 +379,5 @@ export default function AddTrain() {
     </>
   );
 }
+
 

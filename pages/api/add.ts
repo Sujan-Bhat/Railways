@@ -1,5 +1,5 @@
 import type { NextApiRequest, NextApiResponse } from "next";
-import pool from "../../lib/db"; // your mysql pool connection
+import pool from "../../lib/db"; //mysql pool connection
 
 export default async function handler(
   req: NextApiRequest,
