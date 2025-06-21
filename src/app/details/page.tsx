@@ -30,6 +30,7 @@ interface Passenger {
 interface Booking {
   booking_id: number;
   journey_date: string;
+  total_fare:number | null;
   arrival_time: string | null;
   passengers: Passenger[];
 }
@@ -114,138 +115,224 @@ export default function DetailsPage() {
           {error && (
             <p className="text-center text-red-500 mb-4">{error}</p>
           )}
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
-            {/* User Details Card */}
-            <section className="bg-white shadow-xl rounded-lg p-8">
-              <div className="flex flex-col sm:flex-row items-center gap-6">
-                <div className="w-24 h-24 bg-gray-300 rounded-full flex items-center justify-center text-3xl font-bold text-[#2C3E50]">
-                  {userDetails ? userDetails.name.charAt(0).toUpperCase() : "?"}
-                </div>
-                <div className="flex-grow">
-                  <h2 className="text-xl font-semibold text-[#2C3E50] mb-4 text-center sm:text-left">
-                    User Details
-                  </h2>
-                  {userDetails ? (
-                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 text-[#2C3E50]">
-                      <div className="flex items-center">
-                        <span className="font-semibold mr-2">Name:</span>
-                        <span>{userDetails.name}</span>
-                      </div>
-                      <div className="flex items-center">
-                        <span className="font-semibold mr-2">Email:</span>
-                        <span>{userDetails.email}</span>
-                      </div>
-                      <div className="flex items-center">
-                        <span className="font-semibold mr-2">Phone:</span>
-                        <span>{userDetails.phone}</span>
-                      </div>
-                      <div className="flex items-center">
-                        <span className="font-semibold mr-2">Gender:</span>
-                        <span>{userDetails.gender}</span>
-                      </div>
-                      <div className="flex items-center">
-                        <span className="font-semibold mr-2">DOB:</span>
-                        <span>
-                          {userDetails.dob
-                            ? new Date(userDetails.dob).toLocaleDateString()
-                            : "-"}
-                        </span>
-                      </div>
-                      <div className="sm:col-span-2 flex items-center">
-                        <span className="font-semibold mr-2">Address:</span>
-                        <span>{userDetails.address}</span>
-                      </div>
-                      <div className="flex items-center">
-                        <span className="font-semibold mr-2">Aadhaar:</span>
-                        <span>{userDetails.aadhaar}</span>
-                      </div>
-                      <div className="flex items-center">
-                        <span className="font-semibold mr-2">Registered On:</span>
-                        <span>
-                          {userDetails.created_at
-                            ? new Date(userDetails.created_at).toLocaleDateString()
-                            : "-"}
-                        </span>
-                      </div>
-                    </div>
-                  ) : (
-                    <p className="text-center">Loading user details...</p>
-                  )}
-                </div>
-              </div>
-            </section>
+         
+         
 
-            {/* Booking Details Card */}
-            <section className="bg-white shadow-lg rounded-xl p-8">
-              <h1 className="text-2xl font-bold border-b pb-2 mb-4 text-center">
-                Booking Details
-              </h1>
-              {bookings.length > 0 ? (
-                <div className="space-y-6">
-                  {bookings.map((booking) => (
-                    <div
-                      key={booking.booking_id}
-                      className="border-l-4 border-blue-500 p-4 rounded-md bg-gray-50 hover:shadow-lg transition-shadow flex flex-col md:flex-row justify-between items-start md:items-center"
-                    >
-                      <div className="mb-4 md:mb-0">
-                        <p className="text-lg font-semibold">
-                          Booking ID: <span className="font-normal">{booking.booking_id}</span>
-                        </p>
+<div className="flex flex-col md:flex-row">
+  {/* User Details Column – remains fixed */}
+  <aside className="md:w-1/3 sticky top-4 h-screen overflow-y-auto pr-4">
+    {/* This is your user details component/section */}
+    <section className="bg-gradient-to-br from-blue-50 to-white p-8 rounded-xl shadow-lg">
+      {/* Header with Avatar and Name/Email */}
+      <div className="flex items-center border border-gray-300 p-4 rounded-md mb-6">
+        <div className="w-20 h-20 rounded-full bg-blue-200 flex items-center justify-center text-4xl font-bold text-blue-900">
+          {userDetails ? userDetails.name.charAt(0).toUpperCase() : "?"}
+        </div>
+        <div className="ml-4">
+          <h2 className="text-3xl font-extrabold text-gray-800">
+            {userDetails ? userDetails.name : "Loading..."}
+          </h2>
+          <p className="text-gray-600">
+            {userDetails ? userDetails.email : ""}
+          </p>
+        </div>
+      </div>
+
+      {/* User Information – each detail in its own bordered container */}
+      <div className="space-y-4">
+        <div className="border border-gray-300 p-4 rounded-md">
+          <span className="font-semibold inline-block w-32">Phone:</span>
+          <span>{userDetails?.phone}</span>
+        </div>
+        <div className="border border-gray-300 p-4 rounded-md">
+          <span className="font-semibold inline-block w-32">Gender:</span>
+          <span>{userDetails?.gender}</span>
+        </div>
+        <div className="border border-gray-300 p-4 rounded-md">
+          <span className="font-semibold inline-block w-32">DOB:</span>
+          <span>
+            {userDetails &&
+              new Date(userDetails.dob).toLocaleDateString("en-US", {
+                weekday: "long",
+                year: "numeric",
+                month: "long",
+                day: "numeric",
+              })}
+          </span>
+        </div>
+        <div className="border border-gray-300 p-4 rounded-md">
+          <span className="font-semibold inline-block w-32">Aadhaar:</span>
+          <span>{userDetails?.aadhaar}</span>
+        </div>
+        <div className="border border-gray-300 p-4 rounded-md">
+          <span className="font-semibold inline-block w-32">Address:</span>
+          <span>{userDetails?.address}</span>
+        </div>
+        <div className="border border-gray-300 p-4 rounded-md">
+          <span className="font-semibold inline-block w-32">Registered On:</span>
+          <span>
+            {userDetails &&
+              new Date(userDetails.created_at).toLocaleDateString("en-US", {
+                year: "numeric",
+                month: "long",
+                day: "numeric",
+              })}
+          </span>
+        </div>
+      </div>
+    </section>
+  </aside>
+
+  {/* Booking Details Column – scrollable */}
+  <main className="md:w-2/3 h-screen overflow-y-auto pl-4">
+<section className="bg-gradient-to-br from-blue-50 to-white p-8 rounded-xl shadow-lg">
+  <h1 className="text-3xl font-bold text-center text-gray-800 mb-8">
+    Booking Details
+  </h1>
+  {bookings.length > 0 ? (
+    <div className="space-y-8">
+      {bookings.map((booking) => (
+        <div
+          key={booking.booking_id}
+          className="bg-white p-6 border border-gray-200 rounded-xl shadow-md transition-transform hover:scale-105"
+        >
+          {/* Booking Header */}
+          <div className="border-b border-gray-300 pb-4 mb-4">
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+              <div>
+                <p className="text-lg font-bold text-gray-800">
+                  Booking ID:
+                </p>
+                <p className="text-gray-700">{booking.booking_id}</p>
+              </div>
+              <div>
+                <p className="text-lg font-bold text-gray-800">
+                  Train Name:
+                </p>
+                <p className="text-gray-700">{booking.train_name || "-"}</p>
+              </div>
+              <div>
+                <p className="text-lg font-bold text-gray-800">
+                  Total Fare:
+                </p>
+                <p className="text-gray-700">₹{booking.total_fare || "-"}</p>
+              </div>
+            </div>
+          </div>
+
+          {/* Booking Information */}
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-4">
+            <div className="border border-gray-200 p-4 rounded-md">
+              <p className="text-gray-700">
+                <span className="font-bold">From Station: </span>
+                {booking.from_station_name || "-"}
+              </p>
+            </div>
+            <div className="border border-gray-200 p-4 rounded-md">
+              <p className="text-gray-700">
+                <span className="font-bold">To Station: </span>
+                {booking.to_station_name || "-"}
+              </p>
+            </div>
+            <div className="border border-gray-200 p-4 rounded-md">
+              <p className="text-gray-700">
+                <span className="font-bold">Journey Date: </span>
+                {new Date(booking.journey_date).toLocaleDateString("en-US", {
+                  weekday: "long",
+                  year: "numeric",
+                  month: "long",
+                  day: "numeric",
+                })}
+              </p>
+            </div>
+          </div>
+          <div className="border border-gray-200 p-4 rounded-md mb-4">
+            <p className="text-gray-700">
+              <span className="font-bold">Arrival Time: </span>
+              {booking.arrival_time
+                ? new Date("1970-01-01T" + booking.arrival_time).toLocaleTimeString("en-US", {
+                    hour: "2-digit",
+                    minute: "2-digit",
+                  })
+                : "-"}
+                            {booking.status === "cancelled" && (
+      <span className="ml-2 text-red-500 font-bold">Cancelled</span>
+    )}
+            </p>
+          </div>
+
+          {/* Passenger Details */}
+          {booking.passengers.length > 0 && (
+            <div className="mt-4">
+              <h2 className="text-xl font-semibold text-gray-800 mb-4">
+                Passenger Details
+              </h2>
+              <div className="space-y-4">
+                {booking.passengers.map((p) => (
+                  <div
+                    key={p.passenger_id}
+                    className="border border-gray-200 p-4 rounded-md bg-gray-50"
+                  >
+                    <div className="grid grid-cols-1 md:grid-cols-3 gap-2">
+                      <div>
                         <p className="text-gray-700">
-                          Journey Date: <span className="font-medium">{booking.journey_date}</span>
-                        </p>
-                        <p className="text-gray-700">
-                          Arrival Time:{" "}
-                          <span className="font-medium">
-                            {booking.arrival_time
-                              ? new Date("1970-01-01T" + booking.arrival_time).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })
-                              : "-"}
-                          </span>
+                          <span className="font-bold">ID: </span>
+                          {p.passenger_id}
                         </p>
                       </div>
-                      <div className="flex flex-col w-full md:w-auto">
-                        {booking.passengers.length > 0 && (
-                          <div className="space-y-2">
-                            <h3 className="font-semibold text-lg mb-2">Passenger Details:</h3>
-                            <div className="grid grid-cols-1 gap-y-4">
-                              {booking.passengers.map((p) => (
-                                <div
-                                  key={p.passenger_id}
-                                  className="border p-3 rounded-md bg-white shadow-sm hover:shadow-md transition-shadow"
-                                >
-                                  <p className="text-sm">
-                                    <span className="font-semibold">ID:</span> {p.passenger_id}{" "}
-                                    <span className="font-semibold ml-2">Name:</span> {p.passenger_name}
-                                  </p>
-                                  <p className="text-sm">
-                                    <span className="font-semibold">Age:</span> {p.age ?? "-"}{" "}
-                                    <span className="font-semibold ml-2">Gender:</span> {p.gender ?? "-"}
-                                  </p>
-                                  <p className="text-sm">
-                                    <span className="font-semibold">Seat:</span> {p.seat_number || "-"}
-                                  </p>
-                                  <button
-                                    onClick={() =>
-                                      handleCancel(booking.booking_id, p.passenger_id)
-                                    }
-                                    className="mt-2 w-full md:w-auto px-3 py-1 bg-red-500 text-white font-semibold rounded hover:bg-red-600 transition-colors"
-                                  >
-                                    Cancel Ticket
-                                  </button>
-                                </div>
-                              ))}
-                            </div>
-                          </div>
-                        )}
+                      <div>
+                        <p className="text-gray-700">
+                          <span className="font-bold">Name: </span>
+                          {p.passenger_name}
+                        </p>
+                      </div>
+                      <div>
+                        <p className="text-gray-700">
+                          <span className="font-bold">Age: </span>
+                          {p.age ?? "-"}
+                        </p>
+                      </div>
+                      <div>
+                        <p className="text-gray-700">
+                          <span className="font-bold">Gender: </span>
+                          {p.gender ?? "-"}
+                        </p>
+                      </div>
+                      <div>
+                        <p className="text-gray-700">
+                          <span className="font-bold">Seat: </span>
+                          {p.seat_number || "-"}
+                        </p>
                       </div>
                     </div>
-                  ))}
-                </div>
-              ) : (
-                <p className="text-center">No bookings made.</p>
-              )}
-            </section>
-          </div>
+                    {/* Cancel Button aligned to bottom-right */}
+                    <div className="flex justify-end mt-4">
+                      <button
+                        onClick={() =>
+                          handleCancel(booking.booking_id, p.passenger_id)
+                        }
+                        className="px-4 py-2 bg-red-500 text-white font-semibold rounded hover:bg-red-600 transition-colors"
+                      >
+                        Cancel Ticket
+                      </button>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            </div>
+          )}
+        </div>
+      ))}
+    </div>
+  ) : (
+    <p className="text-center text-gray-700">No bookings have been made.</p>
+  )}
+</section>
+
+  </main>
+</div>
+
+         
         </div>
       </main>
       <Footer />

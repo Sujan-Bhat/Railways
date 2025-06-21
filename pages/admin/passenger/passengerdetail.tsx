@@ -36,7 +36,7 @@ export default function ViewPassengerDetails() {
         setLoading(false);
       }
     };
-    
+
     fetchPassengerDetails();
   }, []);
 
@@ -45,7 +45,6 @@ export default function ViewPassengerDetails() {
       <Head>
         <title>Passenger Details</title>
       </Head>
-      {/* Main layout mimicking remove.tsx theme without header/footer */}
       <div className="min-h-screen bg-[#ECF0F1] p-6 flex flex-col items-center text-[#2C3E50]">
         <div className="max-w-5xl w-full bg-white rounded-xl shadow-lg p-8">
           <h1 className="text-3xl font-bold text-center mb-8">Passenger Details</h1>
@@ -57,58 +56,72 @@ export default function ViewPassengerDetails() {
           )}
 
           {passengers.length > 0 && (
-            <div className="overflow-x-auto rounded-md shadow-md">
-              <table className="min-w-full table-auto border-collapse">
-                <thead>
-                  <tr className="bg-[#ECF0F1]">
-                    <th className="px-4 py-3 text-left text-xs font-medium uppercase tracking-wider border-b text-[#2C3E50]">
-                      Passenger ID
-                    </th>
-                    <th className="px-4 py-3 text-left text-xs font-medium uppercase tracking-wider border-b text-[#2C3E50]">
-                      Name
-                    </th>
-                    <th className="px-4 py-3 text-left text-xs font-medium uppercase tracking-wider border-b text-[#2C3E50]">
-                      Age
-                    </th>
-                    <th className="px-4 py-3 text-left text-xs font-medium uppercase tracking-wider border-b text-[#2C3E50]">
-                      Gender
-                    </th>
-                    <th className="px-4 py-3 text-left text-xs font-medium uppercase tracking-wider border-b text-[#2C3E50]">
-                      Seat Number
-                    </th>
-                    <th className="px-4 py-3 text-left text-xs font-medium uppercase tracking-wider border-b text-[#2C3E50]">
-                      Created At
-                    </th>
-                    <th className="px-4 py-3 text-left text-xs font-medium uppercase tracking-wider border-b text-[#2C3E50]">
-                      Train
-                    </th>
-                    <th className="px-4 py-3 text-left text-xs font-medium uppercase tracking-wider border-b text-[#2C3E50]">
-                      From Station
-                    </th>
-                    <th className="px-4 py-3 text-left text-xs font-medium uppercase tracking-wider border-b text-[#2C3E50]">
-                      To Station
-                    </th>
+            <table className="w-full table-fixed border-collapse">
+              <thead className="bg-gray-100">
+                <tr>
+                  <th className="px-3 py-3 text-left text-xs font-medium uppercase tracking-wider border-b text-[#2C3E50]">
+                    Passenger ID
+                  </th>
+                  <th className="px-3 py-3 text-left text-xs font-medium uppercase tracking-wider border-b text-[#2C3E50]">
+                    Name
+                  </th>
+                  <th className="px-3 py-3 text-left text-xs font-medium uppercase tracking-wider border-b text-[#2C3E50]">
+                    Age
+                  </th>
+                  <th className="px-3 py-3 text-left text-xs font-medium uppercase tracking-wider border-b text-[#2C3E50]">
+                    Gender
+                  </th>
+                  <th className="px-3 py-3 text-left text-xs font-medium uppercase tracking-wider border-b text-[#2C3E50]">
+                    Seat Number
+                  </th>
+                  <th className="px-3 py-3 text-left text-xs font-medium uppercase tracking-wider border-b text-[#2C3E50]">
+                    Created At
+                  </th>
+                  <th className="px-3 py-3 text-left text-xs font-medium uppercase tracking-wider border-b text-[#2C3E50]">
+                    Train
+                  </th>
+                  <th className="px-3 py-3 text-left text-xs font-medium uppercase tracking-wider border-b text-[#2C3E50]">
+                    From Station
+                  </th>
+                  <th className="px-3 py-3 text-left text-xs font-medium uppercase tracking-wider border-b text-[#2C3E50]">
+                    To Station
+                  </th>
+                </tr>
+              </thead>
+              <tbody className="bg-white divide-y divide-gray-200">
+                {passengers.map((p) => (
+                  <tr key={p.passenger_id} className="hover:bg-gray-50 transition-colors">
+                    <td className="px-3 py-3 text-sm whitespace-normal break-words">
+                      {p.passenger_id}
+                    </td>
+                    <td className="px-3 py-3 text-sm whitespace-normal break-words">
+                      {p.passenger_name}
+                    </td>
+                    <td className="px-3 py-3 text-sm whitespace-normal break-words">
+                      {p.age ?? "-"}
+                    </td>
+                    <td className="px-3 py-3 text-sm whitespace-normal break-words">
+                      {p.gender ?? "-"}
+                    </td>
+                    <td className="px-3 py-3 text-sm whitespace-normal break-words">
+                      {p.seat_number ?? "-"}
+                    </td>
+                    <td className="px-3 py-3 text-sm whitespace-normal break-words">
+                      {new Date(p.created_at).toLocaleString()}
+                    </td>
+                    <td className="px-3 py-3 text-sm whitespace-normal break-words">
+                      {p.train_name}
+                    </td>
+                    <td className="px-3 py-3 text-sm whitespace-normal break-words">
+                      {p.from_station}
+                    </td>
+                    <td className="px-3 py-3 text-sm whitespace-normal break-words">
+                      {p.to_station}
+                    </td>
                   </tr>
-                </thead>
-                <tbody className="bg-white divide-y divide-gray-200">
-                  {passengers.map((p) => (
-                    <tr key={p.passenger_id} className="hover:bg-gray-100">
-                      <td className="px-4 py-3 text-sm whitespace-nowrap">{p.passenger_id}</td>
-                      <td className="px-4 py-3 text-sm whitespace-nowrap">{p.passenger_name}</td>
-                      <td className="px-4 py-3 text-sm whitespace-nowrap">{p.age ?? "-"}</td>
-                      <td className="px-4 py-3 text-sm whitespace-nowrap">{p.gender ?? "-"}</td>
-                      <td className="px-4 py-3 text-sm whitespace-nowrap">{p.seat_number ?? "-"}</td>
-                      <td className="px-4 py-3 text-sm whitespace-nowrap">
-                        {new Date(p.created_at).toLocaleString()}
-                      </td>
-                      <td className="px-4 py-3 text-sm whitespace-nowrap">{p.train_name}</td>
-                      <td className="px-4 py-3 text-sm whitespace-nowrap">{p.from_station}</td>
-                      <td className="px-4 py-3 text-sm whitespace-nowrap">{p.to_station}</td>
-                    </tr>
-                  ))}
-                </tbody>
-              </table>
-            </div>
+                ))}
+              </tbody>
+            </table>
           )}
         </div>
       </div>

@@ -17,9 +17,9 @@ export default function Hero() {
           <Link href="/booking" className="bg-red-500 text-white uppercase flex items-center gap-2 px-6 py-3 rounded-full font-semibold hover:bg-red-600 transition">
             Book Now 
           </Link>
-          <button className="bg-gray-700 text-white flex items-center gap-2 px-6 py-3 rounded-full font-semibold hover:bg-gray-800 transition">
+          <Link href="/learnmore" className="bg-gray-700 text-white flex items-center gap-2 px-6 py-3 rounded-full font-semibold hover:bg-gray-800 transition">
             Learn More 
-          </button>
+          </Link>
         </div>
       </div>
       {/* Image content */}

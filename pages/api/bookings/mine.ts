@@ -22,24 +22,35 @@ export default async function handler(
   
   try {
     const query = `
-      SELECT 
-        b.booking_id,
-        b.journey_date,
-        ts.arrival_time,
-        p.passenger_id,
-        p.passenger_name,
-        p.age,
-        p.gender,
-        p.seat_number
-      FROM bookings b
-      LEFT JOIN train_schedules ts 
-        ON b.train_id = ts.train_id 
-        AND b.to_station_id = ts.station_id
-      LEFT JOIN passengers p 
-        ON b.booking_id = p.booking_id
-      WHERE b.user_id = ?
-      ORDER BY b.booking_id DESC
-    `;
+  SELECT 
+    b.booking_id,
+    b.journey_date,
+    b.total_fare,
+    b.status,
+    ts.arrival_time,
+    t.train_name,
+    fs.station_name AS from_station_name,
+    ts2.station_name AS to_station_name,
+    p.passenger_id,
+    p.passenger_name,
+    p.age,
+    p.gender,
+    p.seat_number
+  FROM bookings b
+  LEFT JOIN train_schedules ts 
+    ON b.train_id = ts.train_id 
+    AND b.to_station_id = ts.station_id
+  LEFT JOIN trains t 
+    ON b.train_id = t.train_id
+  LEFT JOIN stations fs 
+    ON b.from_station_id = fs.station_id
+  LEFT JOIN stations ts2 
+    ON b.to_station_id = ts2.station_id
+  LEFT JOIN passengers p 
+    ON b.booking_id = p.booking_id
+  WHERE b.user_id = ?
+  ORDER BY b.booking_id DESC
+`;
     const [rows]: any = await pool.query(query, [user_id]);
 
     // Group rows by booking_id so each booking includes its passengers and arrival time.
@@ -50,7 +61,12 @@ export default async function handler(
         bookingsMap[row.booking_id] = {
           booking_id: row.booking_id,
           journey_date: row.journey_date,
-          arrival_time: row.arrival_time, // new field from train_schedules
+          total_fare: row.total_fare,
+          status: row.status,
+          arrival_time: row.arrival_time,
+          train_name: row.train_name,                  // New field
+          from_station_name: row.from_station_name,      // New field
+          to_station_name: row.to_station_name, 
           passengers: []
         };
       }

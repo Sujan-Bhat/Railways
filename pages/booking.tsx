@@ -2,10 +2,10 @@
 
 import { useState, useEffect, ChangeEvent, FormEvent } from "react";
 import Head from "next/head";
+import { useRouter } from "next/router";
 import Header from "../src/app/layout/header";
 import Footer from "../src/app/layout/footer";
 import { useSession } from "next-auth/react";
-import { useRouter } from "next/router";
 
 type Station = {
   station_id: number;
@@ -39,6 +39,7 @@ export default function BookingPage() {
   const { data: session, status } = useSession();
   const router = useRouter();
 
+  // Redirect unauthenticated users
   useEffect(() => {
     if (status === "unauthenticated") {
       router.push("/login");
@@ -58,10 +59,10 @@ export default function BookingPage() {
   const [passengers, setPassengers] = useState<Passenger[]>([
     { passenger_name: "", age: "", gender: "" },
   ]);
-  const [totalFare, setTotalFare] = useState<number>(0);
+  const [farePreview, setFarePreview] = useState<number | null>(null);
   const [bookingMessage, setBookingMessage] = useState("");
 
-  // Load stations from /api/bookings/getStations
+  // Fetch station data on mount
   useEffect(() => {
     const fetchStations = async () => {
       try {
@@ -79,28 +80,44 @@ export default function BookingPage() {
     fetchStations();
   }, []);
 
-  // Calculate total fare based on selected coach and number of passengers.
+  // Update fare preview when key selections change.
   useEffect(() => {
-    if (selectedCoach) {
-      const selectedCoachDetails = coachOptions.find(
-        (coach) => String(coach.coach_id) === selectedCoach
-      );
-      if (selectedCoachDetails) {
-        const fareRates: { [key: string]: number } = {
-          "Sleeper": 500,
-          "AC": 800,
-          "General": 200,
-          "First Class": 1000,
-        };
-        const rate = fareRates[selectedCoachDetails.coach_type] || 500;
-        setTotalFare(rate * passengers.length);
-      } else {
-        setTotalFare(0);
-      }
-    } else {
-      setTotalFare(0);
+    if (
+      selectedTrain &&
+      selectedCoach &&
+      fromStation &&
+      toStation &&
+      journeyDate &&
+      passengers.length > 0
+    ) {
+      const payload = {
+        train_id: selectedTrain.train_id,
+        from_station_id: fromStation,
+        to_station_id: toStation,
+        coach_id: selectedCoach,
+        passengers: passengers,
+      };
+
+      fetch("/api/bookings/calculateFare", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(payload),
+      })
+        .then((res) => res.json())
+        .then((data) => {
+          if (data.success) {
+            setFarePreview(data.fare);
+          } else {
+            console.error("Error calculating fare:", data.error);
+            setFarePreview(null);
+          }
+        })
+        .catch((err) => {
+          console.error("Error fetching fare preview:", err);
+          setFarePreview(null);
+        });
     }
-  }, [selectedCoach, passengers, coachOptions]);
+  }, [selectedTrain, selectedCoach, fromStation, toStation, journeyDate, passengers]);
 
   const handleSearch = async (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault();
@@ -154,7 +171,6 @@ export default function BookingPage() {
       to_station_id: toStation,
       coach_id: selectedCoach,
       passengers,
-      total_fare: totalFare,
     };
 
     try {
@@ -167,7 +183,9 @@ export default function BookingPage() {
       const data = await res.json();
       if (data.success) {
         setBookingMessage("Booking successful! Your booking ID is " + data.booking_id);
-        router.push("/"); // Redirect to main page after success.
+        setTimeout(() => {
+          router.push("/");
+        }, 5000);
       } else {
         setBookingMessage("Booking failed. " + data.error);
       }
@@ -245,17 +263,9 @@ export default function BookingPage() {
             <div className="mb-6">
               <h2 className="text-2xl font-semibold mb-4">No Trains Scheduled</h2>
               <p className="mb-2">
-                We're sorry, but there are no trains scheduled for the route from the selected departure
-                station to the destination on {journeyDate}.
+                We're sorry, but there are no trains scheduled for the selected route on {journeyDate}.
               </p>
-              <p className="mb-2">Please consider the following alternate options:</p>
-              <ul className="list-disc ml-6">
-                <li>Try selecting nearer alternate stations for departure/arrival.</li>
-                <li>Consider traveling on an alternate date.</li>
-                <li>
-                  Explore other transport options such as intercity bus services or ride-sharing.
-                </li>
-              </ul>
+              <p className="mb-2">Consider alternative options.</p>
             </div>
           )}
 
@@ -263,26 +273,24 @@ export default function BookingPage() {
             <div className="mb-6">
               <h2 className="text-2xl font-semibold mb-4">Available Trains</h2>
               <ul>
-                {searchResults.map((train) => (
-                  <li
-                    key={train.train_id}
-                    className="flex items-center justify-between border p-4 rounded-md mb-2 hover:bg-gray-100 transition"
-                  >
-                    <span>
-                      <strong>
-                        {train.train_number} - {train.train_name}
-                      </strong>{" "}
-                      ({train.type})
-                    </span>
-                    <button
-                      onClick={() => handleSelectTrain(train)}
-                      className="bg-green-500 text-white px-4 py-2 rounded hover:bg-green-600 transition"
-                    >
-                      Select
-                    </button>
-                  </li>
-                ))}
-              </ul>
+{searchResults.map((train) => (
+  <li
+    key={train.train_id}
+    className={`flex items-center justify-between border p-4 rounded-md mb-2 transition 
+      ${selectedTrain?.train_id === train.train_id ? 'bg-blue-100' : 'hover:bg-gray-100'}`}
+  >
+    <span>
+      <strong>{train.train_number} - {train.train_name}</strong> ({train.type})
+    </span>
+    <button
+      onClick={() => handleSelectTrain(train)}
+      className="bg-green-500 text-white px-4 py-2 rounded hover:bg-green-600 transition"
+    >
+      {selectedTrain?.train_id === train.train_id ? 'Selected' : 'Select'}
+    </button>
+  </li>
+))}
+             </ul>
             </div>
           )}
 
@@ -343,9 +351,16 @@ export default function BookingPage() {
                 </div>
               ))}
               
-              <div className="mb-4 text-center font-semibold text-xl">
-                Total Fare: Rs. {totalFare}
-              </div>
+              {/* Fare Preview Display */}
+              {farePreview !== null ? (
+                <div className="mb-4 text-center font-semibold text-xl">
+                  Estimated Fare: Rs. {farePreview.toFixed(2)}
+                </div>
+              ) : (
+                <div className="mb-4 text-center font-semibold text-xl">
+                  Calculating fare...
+                </div>
+              )}
               
               <div className="flex justify-between items-center mb-4">
                 <button
